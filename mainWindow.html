@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>For Students</title>
+		<link rel="stylesheet" href="static/sidenav.css" />
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+			integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+			crossorigin="anonymous"
+		/>
+
+		<!-- Bootstrap stuff -->
+
+		<style>
+			body {
+				background-color: #1d2632;
+			}
+			.centertitle {
+				text-align: center;
+				color: white;
+				margin-left: 150px;
+			}
+			.levelup {
+				margin-left: 150px;
+				height: 11vh;
+				grid-row: 1;
+				grid-column: 1;
+			}
+			.progress-level {
+				margin-left: 200px;
+				width: 30vw;
+				grid-row: 1;
+				grid-column: 2;
+				margin-top: 4.5vh;
+				z-index: -1;
+			}
+			#levelgrid {
+				display: grid;
+				grid-template-columns: 0vw 100px;
+				grid-template-rows: 100%;
+			}
+			#time {
+				display: grid;
+				grid-template-columns: 40vw 40vw;
+			}
+			#today {
+				overflow: scroll;
+				grid-column: 1;
+				height: 70vh;
+			}
+			#week {
+				grid-column: 2;
+				overflow: scroll;
+				height: 70vh;
+			}
+			#todaycol {
+				grid-column: 1;
+			}
+			#weekcol {
+				grid-column: 2;
+			}
+			::-webkit-scrollbar {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="sidebar">
+			<a href="#home" class="nava" id="homebtn" onclick="showhome()">Home</a>
+			<a href="#tasks" class="nava" id="taskbtn" onclick="showtasks()">Tasks</a>
+			<a href="#contact" class="nava">TimeTable</a>
+			<a href="#about" class="nava">Quick notes</a>
+			<a href="#about" class="nava">Expenses</a>
+		</div>
+		<div id="levelgrid">
+			<img src="assets/star.png" alt="star" class="levelup" />
+			<div class="progress progress-level">
+				<div class="progress-bar bg-warning" style="width: 40%"></div>
+			</div>
+		</div>
+
+		<div id="home" class="screen centertitle" style="display: none">
+			<h1>Home</h1>
+		</div>
+
+		<div
+			id="tasks"
+			class="screen centertitle"
+			style="display: none; margin-right: 100px"
+		>
+			<h1>Tasks</h1>
+			<div class="container" id="time">
+				<div class="container" id="todaycol">
+					<h2>Today's Tasks</h2>
+
+					<div
+						class="container"
+						id="today"
+						style="border: 3px solid white; border-radius: 20px"
+					>
+						<p>
+							dbfjerjbjebvhjdbvhjbjhrbvhjbvhjbhjvbhjvbhjvbhjbvhjbvhdbvhjkdbvjkdbvjbvjhdbvhjbv
+							hjfbhjbvjbjhvbhjbvjv
+						</p>
+					</div>
+				</div>
+
+				<div class="container" id="weekcol">
+					<h2>This Week's Tasks</h2>
+
+					<div
+						class="container"
+						id="week"
+						style="border: 3px solid white; border-radius: 20px"
+					>
+						<p>
+							dbfjerjbjebvhjdbvhjbjhrbvhjbvhjbhjvbhjvbhjvbhjbvhjbvhdbvhjkdbvjkdbvjbvjhdbvhjbv
+							hjfbhjbvjbjhvbhjbvjv
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			let task = document.getElementById("tasks");
+			let taskbtn = document.getElementById("taskbtn");
+
+			let allnav = document.getElementsByClassName("nava");
+			let allscreens = document.getElementsByClassName("screen");
+
+			let home = document.getElementById("home");
+			let homebtn = document.getElementById("homebtn");
+
+			let main = document.getElementById("main");
+
+			function showtasks() {
+				for (var i = 0; i < allscreens.length; i++) {
+					allscreens[i].style.display = "none";
+				}
+				task.style.display = "block";
+				taskbtn.className = "active";
+				homebtn.className = "";
+			}
+
+			function showhome() {
+				for (var i = 0; i < allscreens.length; i++) {
+					allscreens[i].style.display = "none";
+				}
+
+				home.style.display = "block";
+				homebtn.className = "active";
+				taskbtn.className = "";
+			}
+		</script>
+
+		<div class="centertitle screen" id="main">
+			<h1>This</h1>
+		</div>
+	</body>
+</html>

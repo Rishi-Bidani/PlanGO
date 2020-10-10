@@ -1,0 +1,22 @@
+{
+  "name": "plango",
+  "version": "1.0.0",
+  "description": "Timathon For Students app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "rebuild": "electron-rebuild -f -w sqlite3"
+  },
+  "author": "Rishi Bidani",
+  "license": "MIT",
+  "dependencies": {
+    "custom-electron-titlebar": "^3.2.4",
+    "electron": "^10.1.3",
+    "jquery": "^3.5.1",
+    "knex": "^0.21.6",
+    "sqlite3": "^5.0.0"
+  },
+  "devDependencies": {
+    "electron-rebuild": "^2.2.0"
+  }
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Add Task</title>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+		/>
+
+		<style>
+			body {
+				background-color: #476d7c;
+				font-family: "Helvetica";
+			}
+			h2 {
+				margin-top: 10px;
+			}
+			label {
+				font-size: medium;
+			}
+			nav {
+				background-color: #254b62;
+			}
+			input[type="text"] {
+				color: white;
+				font-family: Helvetica;
+			}
+			#submitbtn {
+				vertical-align: bottom;
+			}
+			.slider-number {
+			}
+		</style>
+	</head>
+	<body>
+		<nav>
+			<div class="nav-wrapper">
+				<h2 class="brand-logo center">Add Task</h2>
+			</div>
+		</nav>
+		<br />
+		<div class="container">
+			<form>
+				<label for="taskInput">Task Name</label>
+				<input
+					id="taskInput"
+					type="text"
+					placeholder="Homework"
+					style="margin-bottom: 5vh"
+				/>
+
+				<label for="points">Assign Yourself Some Points on Completion</label>
+
+				<p class="range-field">
+					<input
+						type="range"
+						id="point"
+						min="0"
+						max="5"
+						value="3"
+						oninput="num.value = this.value"
+					/>
+					<center><output id="num" class="slider-number">3</output></center>
+				</p>
+				<input
+					type="submit"
+					class="btn waves-effect waves-light"
+					id="submitbtn"
+				/>
+			</form>
+		</div>
+
+		<script>
+			const electron = require("electron");
+			const { ipcRenderer } = electron;
+
+			const form = document.querySelector("form");
+			form.addEventListener("submit", submitForm);
+
+			function submitForm(e) {
+				e.preventDefault();
+				const task = document.querySelector("#taskInput").value;
+				const point = document.querySelector("#num").value;
+
+				let allValues = [task, point];
+				// ipcRenderer.send("item:task", task);
+				// ipcRenderer.send("item:point", point);
+				ipcRenderer.send("item:values", allValues);
+			}
+		</script>
+	</body>
+</html>
