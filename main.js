@@ -21,6 +21,7 @@ app.on("ready", function () {
 	//create new window
 	mainWindow = new BrowserWindow({
 		webPreferences: { nodeIntegration: true },
+		show: false,
 	});
 	mainWindow.maximize();
 	mainWindow.loadURL(
@@ -62,24 +63,6 @@ function createAddTask() {
 	});
 	addTask.setMenuBarVisibility(false);
 }
-
-// //catch item:add
-// ipcMain.on("item:task", function (e, item) {
-//   console.log(item);
-
-//   addTask.close();
-//   var insert1 = {task: item, points: "4", time: "this week"};
-
-//   knex.insert(insert1).into("task").then(function (id) {
-//     console.log(id);
-//   }).catch(function(error) { console.error(error); });
-
-// });
-
-// //catch item:point
-// ipcMain.on("item:point", function(e, point){
-//   console.log(point);
-// });
 
 //catch all values from item:values
 ipcMain.on("item:values", function (e, item) {
