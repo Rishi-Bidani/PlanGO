@@ -2,6 +2,7 @@
 <html lang="en">
 	<head>
 		<title>For Students</title>
+
 		<link rel="stylesheet" href="static/sidenav.css" />
 		<link
 			rel="stylesheet"
@@ -80,6 +81,7 @@
 							dbfjerjbjebvhjdbvhjbjhrbvhjbvhjbhjvbhjvbhjvbhjbvhjbvhdbvhjkdbvjkdbvjbvjhdbvhjbv
 							hjfbhjbvjbjhvbhjbvjv
 						</p>
+						<ul></ul>
 					</div>
 				</div>
 
@@ -101,6 +103,16 @@
 		</div>
 
 		<script>
+			const path = require("path");
+
+			//knex
+			var knex = require("knex")({
+				client: "sqlite3",
+				connection: {
+					filename: path.join(__dirname, "data.sqlite3"),
+				},
+			});
+
 			let task = document.getElementById("tasks");
 			let taskbtn = document.getElementById("taskbtn");
 
@@ -129,6 +141,41 @@
 				home.style.display = "block";
 				homebtn.className = "active";
 				taskbtn.className = "";
+			}
+
+			knex
+				.select("task")
+				.from("task")
+				.then((task) => {
+					console.log(task);
+					console.log(task.length);
+					for (var i = 0; i < task.length; i++) {
+						console.log(task[i].task);
+
+						const ul = document.querySelector("ul");
+						ul.className = "collection";
+						const li = document.createElement("li");
+						li.className = "collection-item";
+
+						const itemText = document.createTextNode(task[i].task);
+
+						li.appendChild(itemText);
+						ul.appendChild(li);
+					}
+				});
+
+			//Remove Items
+			const ul = document.querySelector("ul");
+
+			const li = document.createElement("li");
+
+			ul.addEventListener("dblclick", removeItem);
+
+			function removeItem(e) {
+				e.target.remove();
+				if (ul.children.length == 0) {
+					ul.className = "";
+				}
 			}
 		</script>
 
