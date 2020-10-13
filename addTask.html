@@ -70,13 +70,13 @@
 
 				<p>
 					<label style="color: black">
-						<input name="timespan" type="radio" value="today" checked />
+						<input name="timespan" type="radio" id="t" value="today" checked />
 						<span>Today</span>
 					</label>
 				</p>
 				<p>
 					<label style="color: black">
-						<input name="timespan" type="radio" value="this week" />
+						<input name="timespan" type="radio" id="tw" value="this week" />
 						<span>This Week</span>
 					</label>
 				</p>
@@ -100,8 +100,15 @@
 				e.preventDefault();
 				const task = document.querySelector("#taskInput").value;
 				const point = document.querySelector("#num").value;
+				var timesp = "";
 
-				let allValues = [task, point];
+				if (document.getElementById("t").checked) {
+					timesp = document.getElementById("t").value;
+				} else {
+					timesp = document.getElementById("tw").value;
+				}
+
+				let allValues = [task, point, timesp];
 				// ipcRenderer.send("item:task", task);
 				// ipcRenderer.send("item:point", point);
 				ipcRenderer.send("item:values", allValues);
