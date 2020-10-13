@@ -31,6 +31,25 @@ app.on("ready", function () {
 			slashes: true,
 		})
 	);
+
+	taskContents = [];
+
+	knex
+		.select("task")
+		.from("task")
+		.then((task) => {
+			for (var i = 0; i < task.length; i++) {
+				taskContents.push(task[i]);
+			}
+			mainWindow.webContents.on("did-finish-load", () => {
+				console.log(taskContents);
+				mainWindow.webContents.send("item:task", taskContents);
+			});
+		})
+		.catch(function (error) {
+			console.error(error);
+		});
+
 	//Quit app when closed
 	mainWindow.on("closed", function () {
 		app.quit();
@@ -48,6 +67,7 @@ function createAddTask() {
 		width: 500,
 		height: 700,
 		title: "Add Task",
+		slashes: true,
 		webPreferences: { nodeIntegration: true },
 	});
 	addTask.loadURL(
@@ -79,6 +99,7 @@ ipcMain.on("item:values", function (e, item) {
 		.catch(function (error) {
 			console.error(error);
 		});
+	mainWindow.reload();
 });
 
 // Create Menu Template

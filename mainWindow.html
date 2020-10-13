@@ -104,14 +104,8 @@
 
 		<script>
 			const path = require("path");
-
-			//knex
-			var knex = require("knex")({
-				client: "sqlite3",
-				connection: {
-					filename: path.join(__dirname, "data.sqlite3"),
-				},
-			});
+			const electron = require("electron");
+			const { ipcRenderer } = electron;
 
 			let task = document.getElementById("tasks");
 			let taskbtn = document.getElementById("taskbtn");
@@ -143,26 +137,21 @@
 				taskbtn.className = "";
 			}
 
-			knex
-				.select("task")
-				.from("task")
-				.then((task) => {
-					console.log(task);
-					console.log(task.length);
-					for (var i = 0; i < task.length; i++) {
-						console.log(task[i].task);
+			ipcRenderer.on("item:task", function (e, item) {
+				console.log(item);
+				for (var i = 0; i < item.length; i++) {
+					console.log(item[i].task);
+					const ul = document.querySelector("ul");
+					const li = document.createElement("li");
+					ul.className = "collection";
+					li.className = "collection-item";
 
-						const ul = document.querySelector("ul");
-						ul.className = "collection";
-						const li = document.createElement("li");
-						li.className = "collection-item";
+					const itemText = document.createTextNode(item[i].task);
 
-						const itemText = document.createTextNode(task[i].task);
-
-						li.appendChild(itemText);
-						ul.appendChild(li);
-					}
-				});
+					li.appendChild(itemText);
+					ul.appendChild(li);
+				}
+			});
 
 			//Remove Items
 			const ul = document.querySelector("ul");
