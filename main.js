@@ -98,7 +98,7 @@ function createAddTask() {
 			.into("task")
 			.then(function (id) {
 				// taskContents.push(insert1.task);
-				// addTask.close(); -- this is causing my app to duplicate values CHECK IT OUT
+				// addTask.close(); //-- this is causing my app to duplicate values CHECK IT OUT
 				updateTasks(taskContents);
 			})
 			.catch(function (error) {
@@ -106,6 +106,18 @@ function createAddTask() {
 			});
 	});
 }
+
+//catch item:toDelete to delete
+ipcMain.on("item:toDelete", function (e, item) {
+	console.log(item);
+	knex("task")
+		.where("task", item)
+		.del()
+		.then(() => {
+			updateTasks(taskContents);
+		});
+});
+
 // Create Menu Template
 
 const mainMenuTemplate = [

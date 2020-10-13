@@ -175,11 +175,13 @@
 			ul2.addEventListener("dblclick", removeItem);
 
 			function removeItem(e) {
-				console.log(e);
+				// var myVal = e.target.innerHTML;
+				// console.log(myVal);
 				e.target.remove();
 				if (ul.children.length == 0) {
 					ul.className = "";
 				}
+				ipcRenderer.send("item:toDelete", e.target.innerHTML);
 			}
 		</script>
 
