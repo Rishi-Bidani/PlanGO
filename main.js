@@ -3,9 +3,12 @@ const url = require("url");
 const path = require("path");
 const { Menu } = require("electron/main");
 const { app, BrowserWindow, ipcMain, webContents } = electron;
+// const { getCurrentWindow } = require("electron").remote;
 
 let mainWindow;
 let addTask;
+
+taskContents = [];
 
 //knex
 var knex = require("knex")({
@@ -32,23 +35,7 @@ app.on("ready", function () {
 		})
 	);
 
-	taskContents = [];
-
-	knex
-		.select("task")
-		.from("task")
-		.then((task) => {
-			for (var i = 0; i < task.length; i++) {
-				taskContents.push(task[i]);
-			}
-			mainWindow.webContents.on("did-finish-load", () => {
-				console.log(taskContents);
-				mainWindow.webContents.send("item:task", taskContents);
-			});
-		})
-		.catch(function (error) {
-			console.error(error);
-		});
+	updateTasks(taskContents);
 
 	//Quit app when closed
 	mainWindow.on("closed", function () {
@@ -60,6 +47,25 @@ app.on("ready", function () {
 	//Insert menu
 	Menu.setApplicationMenu(mainMenu);
 });
+
+function updateTasks(arr) {
+	arr = [];
+	knex
+		.select("task", "time")
+		.from("task")
+		.then((task) => {
+			for (var i = 0; i < task.length; i++) {
+				arr.push(task[i]);
+			}
+			mainWindow.webContents.on("did-finish-load", () => {
+				mainWindow.webContents.send("item:task", arr);
+			});
+			mainWindow.reload();
+		})
+		.catch(function (error) {
+			console.error(error);
+		});
+}
 
 function createAddTask() {
 	//create new window
@@ -82,26 +88,24 @@ function createAddTask() {
 		addTask = null;
 	});
 	addTask.setMenuBarVisibility(false);
+
+	//catch all values from item:values
+	ipcMain.on("item:values", function (e, item) {
+		var insert1 = { task: item[0], points: item[1], time: item[2] };
+
+		knex
+			.insert(insert1)
+			.into("task")
+			.then(function (id) {
+				// taskContents.push(insert1.task);
+				// addTask.close(); -- this is causing my app to duplicate values CHECK IT OUT
+				updateTasks(taskContents);
+			})
+			.catch(function (error) {
+				console.error(error);
+			});
+	});
 }
-
-//catch all values from item:values
-ipcMain.on("item:values", function (e, item) {
-	console.log(item);
-	addTask.close();
-	var insert1 = { task: item[0], points: item[1], time: "this week" };
-
-	knex
-		.insert(insert1)
-		.into("task")
-		.then(function (id) {
-			console.log(id);
-		})
-		.catch(function (error) {
-			console.error(error);
-		});
-	mainWindow.reload();
-});
-
 // Create Menu Template
 
 const mainMenuTemplate = [
@@ -169,3 +173,6 @@ if (process.env.NODE_ENV != "production") {
 		],
 	});
 }
+// var reload = () => {
+// 	getCurrentWindow().reload();
+// };

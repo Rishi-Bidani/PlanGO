@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>For Students</title>
+		<title>PlanGO</title>
 
 		<link rel="stylesheet" href="static/sidenav.css" />
 		<link
@@ -81,7 +81,7 @@
 							dbfjerjbjebvhjdbvhjbjhrbvhjbvhjbhjvbhjvbhjvbhjbvhjbvhdbvhjkdbvjkdbvjbvjhdbvhjbv
 							hjfbhjbvjbjhvbhjbvjv
 						</p>
-						<ul></ul>
+						<ul id="t"></ul>
 					</div>
 				</div>
 
@@ -97,6 +97,7 @@
 							dbfjerjbjebvhjdbvhjbjhrbvhjbvhjbhjvbhjvbhjvbhjbvhjbvhdbvhjkdbvjkdbvjbvjhdbvhjbv
 							hjfbhjbvjbjhvbhjbvjv
 						</p>
+						<ul id="tw"></ul>
 					</div>
 				</div>
 			</div>
@@ -139,9 +140,20 @@
 
 			ipcRenderer.on("item:task", function (e, item) {
 				console.log(item);
+				const ul2 = document.getElementById("tw");
+				ul.innerHTML = "";
+				ul.className = "";
+				ul2.innerHTML = "";
+				ul2.className = "";
 				for (var i = 0; i < item.length; i++) {
 					console.log(item[i].task);
-					const ul = document.querySelector("ul");
+					let ul = "";
+
+					if (item[i].time == "today") {
+						ul = document.getElementById("t");
+					} else {
+						ul = document.getElementById("tw");
+					}
 					const li = document.createElement("li");
 					ul.className = "collection";
 					li.className = "collection-item";
@@ -153,14 +165,17 @@
 				}
 			});
 
-			//Remove Items
+			// //Remove Items
 			const ul = document.querySelector("ul");
+			const ul2 = document.getElementById("tw");
 
 			const li = document.createElement("li");
 
 			ul.addEventListener("dblclick", removeItem);
+			ul2.addEventListener("dblclick", removeItem);
 
 			function removeItem(e) {
+				console.log(e);
 				e.target.remove();
 				if (ul.children.length == 0) {
 					ul.className = "";
