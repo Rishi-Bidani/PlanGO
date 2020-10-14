@@ -73,7 +73,7 @@ function createAddTask() {
 		height: 700,
 		title: "Add Task",
 		slashes: true,
-		webPreferences: { nodeIntegration: true, enableRemoteModule: true },
+		webPreferences: { nodeIntegration: true },
 	});
 	addTask.loadURL(
 		url.format({
@@ -87,26 +87,26 @@ function createAddTask() {
 		addTask = null;
 	});
 	addTask.setMenuBarVisibility(false);
-
-	//catch all values from item:values
-	ipcMain.on("item:values", function (e, item) {
-		var insert1 = { task: item[0], points: item[1], time: item[2] };
-
-		knex
-			.insert(insert1)
-			.into("task")
-			.then(function (id) {
-				// taskContents.push(insert1.task);
-				// addTask.close(); //-- this is causing my app to duplicate values CHECK IT OUT
-				updateTasks(taskContents);
-			})
-			.catch(function (error) {
-				console.error(error);
-			});
-	});
 }
 
-//catch item:toDelete to delete
+//catch all values from item:values =============================================================
+
+ipcMain.on("item:values", function (e, item) {
+	var insert1 = { task: item[0], points: item[1], time: item[2] };
+	addTask.close();
+	knex
+		.insert(insert1)
+		.into("task")
+		.then(function (id) {
+			updateTasks(taskContents);
+		})
+		.catch(function (error) {
+			console.error(error);
+		});
+});
+// end collection for adding tasks =============================================================
+
+//catch item:toDelete to delete =================================================================
 ipcMain.on("item:toDelete", function (e, item) {
 	console.log(item);
 	knex("task")
@@ -116,6 +116,8 @@ ipcMain.on("item:toDelete", function (e, item) {
 			updateTasks(taskContents);
 		});
 });
+
+// end collection of toDelete ===================================================================
 
 // Create Menu Template
 
