@@ -11,6 +11,7 @@
 	word-wrap: break-word;
 	padding-left: 30px;
 	padding-right: 30px;
+	padding-top: 20px;
 	text-align: left;
 }
 #week {
@@ -20,6 +21,7 @@
 	overflow-x: hidden;
 	padding-left: 30px;
 	padding-right: 30px;
+	padding-top: 20px;
 	text-align: left;
 	word-wrap: break-word;
 }

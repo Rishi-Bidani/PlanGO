@@ -3,7 +3,6 @@ const url = require("url");
 const path = require("path");
 const { Menu } = require("electron/main");
 const { app, BrowserWindow, ipcMain, webContents } = electron;
-// const { getCurrentWindow } = require("electron").remote;
 
 let mainWindow;
 let addTask;
@@ -74,7 +73,7 @@ function createAddTask() {
 		height: 700,
 		title: "Add Task",
 		slashes: true,
-		webPreferences: { nodeIntegration: true },
+		webPreferences: { nodeIntegration: true, enableRemoteModule: true },
 	});
 	addTask.loadURL(
 		url.format({
