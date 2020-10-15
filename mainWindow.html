@@ -49,7 +49,9 @@
 			<a href="#tasks" class="nava" id="taskbtn" onclick="showtasks()">Tasks</a>
 			<a href="#contact" class="nava">TimeTable</a>
 			<a href="#about" class="nava">Quick notes</a>
-			<a href="#about" class="nava">Expenses</a>
+			<a href="#about" class="nava" id="expensesbtn" onclick="showExpenses()"
+				>Expenses</a
+			>
 		</div>
 		<div id="levelgrid">
 			<img src="assets/star.png" alt="star" class="levelup" />
@@ -95,39 +97,67 @@
 			</div>
 		</div>
 
+		<div
+			id="expense"
+			class="screen centertitle"
+			style="display: none; margin-right: 100px"
+		>
+			<h1>Expenses</h1>
+		</div>
+
 		<script>
 			const path = require("path");
 			const electron = require("electron");
 			const { ipcRenderer } = electron;
 
-			let task = document.getElementById("tasks");
-			let taskbtn = document.getElementById("taskbtn");
-
-			let allnav = document.getElementsByClassName("nava");
+			// Screens bellow ------------------------------------------
 			let allscreens = document.getElementsByClassName("screen");
-
+			let task = document.getElementById("tasks");
 			let home = document.getElementById("home");
-			let homebtn = document.getElementById("homebtn");
-
 			let main = document.getElementById("main");
+
+			// Buttons bellow ----------------------------------------
+			let taskbtn = document.getElementById("taskbtn");
+			let homebtn = document.getElementById("homebtn");
+			let expensesbtn = document.getElementById("expensesbtn");
+
+			nav = [taskbtn, homebtn, expensesbtn];
 
 			function showtasks() {
 				for (var i = 0; i < allscreens.length; i++) {
 					allscreens[i].style.display = "none";
 				}
+				for (var i = 0; i < nav.length; i++) {
+					nav[i].className = "";
+				}
 				task.style.display = "block";
 				taskbtn.className = "active";
-				homebtn.className = "";
 			}
 
 			function showhome() {
 				for (var i = 0; i < allscreens.length; i++) {
 					allscreens[i].style.display = "none";
 				}
+				for (var i = 0; i < nav.length; i++) {
+					nav[i].className = "";
+				}
 
 				home.style.display = "block";
 				homebtn.className = "active";
-				taskbtn.className = "";
+			}
+
+			function showExpenses() {
+				for (var i = 0; i < allscreens.length; i++) {
+					allscreens[i].style.display = "none";
+				}
+
+				for (var i = 0; i < nav.length; i++) {
+					nav[i].className = "";
+				}
+
+				expense.style.display = "block";
+				expensesbtn.className = "active";
+				// expensesbtn.className = "";
 			}
 
 			ipcRenderer.on("item:task", function (e, item) {

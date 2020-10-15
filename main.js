@@ -115,6 +115,10 @@ ipcMain.on("item:toDelete", function (e, item) {
 		.then(() => {
 			updateTasks(taskContents);
 		});
+	knex("sqlite_sequence")
+		.where("name", "task")
+		.update({ seq: 0 })
+		.then(console.log("worked"));
 });
 
 // end collection of toDelete ===================================================================
