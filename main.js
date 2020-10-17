@@ -22,6 +22,7 @@ var knex = require("knex")({
 app.on("ready", function () {
 	//create new window
 	mainWindow = new BrowserWindow({
+		width: 1100,
 		webPreferences: { nodeIntegration: true },
 		show: false,
 	});
@@ -77,7 +78,7 @@ function createAddTask() {
 	});
 	addTask.loadURL(
 		url.format({
-			pathname: path.join(__dirname, "addTask.html"),
+			pathname: path.join(__dirname, "templates/addTask.html"),
 			protocol: "file:",
 			slashes: true,
 		})
@@ -108,20 +109,83 @@ ipcMain.on("item:values", function (e, item) {
 
 //catch item:toDelete to delete =================================================================
 ipcMain.on("item:toDelete", function (e, item) {
-	console.log(item);
 	knex("task")
 		.where("task", item)
 		.del()
 		.then(() => {
 			updateTasks(taskContents);
 		});
-	knex("sqlite_sequence")
-		.where("name", "task")
-		.update({ seq: 0 })
-		.then(console.log("worked"));
+	knex("sqlite_sequence").where("name", "task").update({ seq: 0 }).then();
 });
 
 // end collection of toDelete ===================================================================
+
+function createAddExpense() {
+	addExpense = new BrowserWindow({
+		title: "Add Expense",
+		slashes: true,
+		webPreferences: { nodeIntegration: true },
+		height: 600,
+		width: 800,
+	});
+	addExpense.loadURL(
+		url.format({
+			pathname: path.join(__dirname, "templates/addExpense.html"),
+			protocol: "file:",
+			slashes: true,
+		})
+	);
+	// Garbage collection
+	addExpense.on("close", function () {
+		addTask = null;
+	});
+	addExpense.setMenuBarVisibility(false);
+}
+
+// catch item:expenses from addExpenses.html
+ipcMain.on("item:expenses", function (e, item) {
+	let amount = item.amount;
+	let date = item.date;
+	let group = item.group;
+	console.log(item);
+	addExpense.close();
+	for (let i = 0; i < amount.length; i++) {
+		var insertExpenses = { amount: amount[i], date: date[i], group: group[i] };
+	}
+	knex
+		.insert(insertExpenses)
+		.into("expense")
+		.then(() => {
+			console.log("done");
+		})
+		.catch(function (error) {
+			console.error(error);
+		});
+});
+
+// add budget
+
+function createAddBudget() {
+	addBudget = new BrowserWindow({
+		title: "Add Expense",
+		slashes: true,
+		webPreferences: { nodeIntegration: true },
+		height: 300,
+		width: 400,
+	});
+	addBudget.loadURL(
+		url.format({
+			pathname: path.join(__dirname, "templates/addBudget.html"),
+			protocol: "file:",
+			slashes: true,
+		})
+	);
+	// Garbage collection
+	addBudget.on("close", function () {
+		addBudget = null;
+	});
+	addBudget.setMenuBarVisibility(false);
+}
 
 // Create Menu Template
 
@@ -130,9 +194,11 @@ const mainMenuTemplate = [
 		label: "File",
 		submenu: [
 			{
-				label: "Add Item",
+				label: "Github Repo",
 				click() {
-					createAddTask();
+					require("electron").shell.openExternal(
+						"https://github.com/Rishi-Bidani/PlanGO"
+					);
 				},
 			},
 			{
@@ -159,6 +225,25 @@ const mainMenuTemplate = [
 					createAddTask();
 				},
 				accelerator: process.platform == "darwin" ? "command+T" : "Ctrl+T",
+			},
+		],
+	},
+	{
+		label: "Expenses",
+		submenu: [
+			{
+				label: "Add Expenses",
+				click() {
+					createAddExpense();
+				},
+				accelerator: process.platform == "darwin" ? "command+E" : "Ctrl+E",
+			},
+			{
+				label: "Add Budget",
+				click() {
+					createAddBudget();
+				},
+				accelerator: process.platform == "darwin" ? "command+B" : "Ctrl+B",
 			},
 		],
 	},

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Add Expense</title>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+		/>
+
+		<style>
+			body {
+				background-color: #476d7c;
+				font-family: "Helvetica";
+			}
+			h2 {
+				margin-top: 10px;
+			}
+			label {
+				font-size: medium;
+			}
+			nav {
+				background-color: #254b62;
+			}
+			select {
+				display: unset !important;
+			}
+			input[type="number"] {
+				color: white;
+				font-family: Helvetica;
+			}
+			input[type="date"] {
+				color: white;
+				font-family: Helvetica;
+			}
+		</style>
+	</head>
+	<body>
+		<nav>
+			<div class="nav-wrapper">
+				<h2 class="brand-logo center">Add Expense</h2>
+			</div>
+		</nav>
+
+		<div class="container">
+			<form>
+				<table id="myExpen">
+					<thead>
+						<tr>
+							<th>Amount</th>
+							<th>Date</th>
+							<th>Item Group</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><input type="number" name="amt[]" /></td>
+							<td><input type="date" name="date[]" /></td>
+							<td>
+								<select name="group[]">
+									<option value="">--Select Group--</option>
+									<option>Food</option>
+									<option>Education</option>
+									<option>Miscellaneous</option>
+								</select>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+			<center>
+				<button class="btn waves-effect waves-light" id="add_btn">
+					Add Row
+				</button>
+				<button class="btn waves-effect waves-light" id="submit">Submit</button>
+			</center>
+		</div>
+
+		<script>
+			const electron = require("electron");
+			const { ipcRenderer } = electron;
+
+			const form = document.querySelector("form");
+			form.addEventListener("submit", submitForm);
+
+			function addRow() {
+				var table = document.getElementById("myExpen");
+				var rows = document.getElementById("myExpen").rows.length;
+
+				var table = document.getElementById("myExpen");
+				var rows = document.getElementById("myExpen").rows.length;
+				// add row
+				var row = table.insertRow(rows);
+
+				// column 1
+				var cell1 = row.insertCell(0);
+				var inputItem1 = document.createElement("input");
+				inputItem1.setAttribute("type", "number");
+				inputItem1.setAttribute("name", "amt[]");
+				cell1.appendChild(inputItem1);
+
+				//column 2
+				var cell2 = row.insertCell(1);
+				var inputItem2 = document.createElement("input");
+				inputItem2.setAttribute("type", "date");
+				inputItem2.setAttribute("name", "date[]");
+				cell2.appendChild(inputItem2);
+
+				// column 3
+				var cell3 = row.insertCell(2);
+				var inputItem3 = document.createElement("select");
+				inputItem3.setAttribute("name", "group[]");
+				options = ["--Select Group--", "Food", "Education", "Miscellaneous"];
+				for (var i = 0; i < options.length; i++) {
+					const option = document.createElement("option");
+
+					const values = document.createTextNode(options[i]);
+					option.appendChild(values);
+					inputItem3.appendChild(option);
+					cell3.appendChild(inputItem3);
+				}
+			}
+			// ==========================================================================
+			function submitForm() {
+				var amountList = [];
+				var datesList = [];
+				var groupList = [];
+				var dictExpen = {};
+
+				var amt = document.getElementsByName("amt[]");
+				var date = document.getElementsByName("date[]");
+				var group = document.getElementsByName("group[]");
+				for (var i = 0; i < amt.length; i++) {
+					amountList.push(amt[i].value);
+					datesList.push(date[i].value);
+					groupList.push(group[i].value);
+				}
+				dictExpen["amount"] = amountList;
+				dictExpen["date"] = datesList;
+				dictExpen["group"] = groupList;
+				console.log(dictExpen);
+
+				ipcRenderer.send("item:expenses", dictExpen);
+			}
+
+			document.getElementById("submit").onclick = submitForm;
+			document.getElementById("add_btn").onclick = addRow;
+		</script>
+	</body>
+</html>

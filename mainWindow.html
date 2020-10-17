@@ -10,6 +10,10 @@
 			integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
 			crossorigin="anonymous"
 		/>
+		<script
+			type="text/javascript"
+			src="https://www.gstatic.com/charts/loader.js"
+		></script>
 
 		<link rel="stylesheet" href="static/taskgrid.css" />
 
@@ -38,8 +42,37 @@
 			}
 			#levelgrid {
 				display: grid;
-				grid-template-columns: 0vw 100px;
+				grid-template-columns: 0vw 30vw 50vw;
 				grid-template-rows: 100%;
+			}
+			#maintitle {
+				grid-column: 3;
+				grid-row: 1;
+				margin-top: 2vh;
+				margin-left: 0px;
+			}
+			#expenses {
+				display: grid;
+				grid-template-rows: 5% 5% 60%;
+				grid-template-columns: 30vw 25vw 30vw;
+			}
+			#piechart {
+				grid-column: 1;
+				grid-row: 2;
+				margin-top: 30vh;
+			}
+			#col1{
+				grid-row: 1;
+				grid-column: 1;
+			}
+			table{
+				text-align: left;
+				margin-left: 5vw;
+				border: white;
+				margin-top: 200px;
+			}
+			td{
+				padding-right: 40px;
 			}
 		</style>
 	</head>
@@ -50,18 +83,22 @@
 			<a href="#contact" class="nava">TimeTable</a>
 			<a href="#about" class="nava">Quick notes</a>
 			<a href="#about" class="nava" id="expensesbtn" onclick="showExpenses()"
-				>Expenses</a
-			>
+				>Expenses
+			</a>
 		</div>
+
 		<div id="levelgrid">
 			<img src="assets/star.png" alt="star" class="levelup" />
 			<div class="progress progress-level">
 				<div class="progress-bar bg-warning" style="width: 40%"></div>
 			</div>
+			<div id="maintitle">
+				<h1 class="centertitle" style="margin-left: 0px" id="title">Default</h1>
+			</div>
 		</div>
 
 		<div id="home" class="screen centertitle" style="display: none">
-			<h1>Home</h1>
+			<!-- <h1>Home</h1> -->
 		</div>
 
 		<div
@@ -69,7 +106,8 @@
 			class="screen centertitle"
 			style="display: none; margin-right: 100px"
 		>
-			<h1>Tasks</h1>
+			<!-- <h1>Tasks</h1> -->
+			<br />
 			<div class="container" id="time">
 				<div class="container" id="todaycol">
 					<h2>Today's Tasks</h2>
@@ -97,12 +135,80 @@
 			</div>
 		</div>
 
+
+		<!-- Expense manager View -->
+
 		<div
 			id="expense"
 			class="screen centertitle"
-			style="display: none; margin-right: 100px"
+			style="display: none;"
 		>
-			<h1>Expenses</h1>
+		<div id="expenses">
+			<div id="Ecolumn1">
+				<div>
+					<table>
+					<tr>
+					<td><h4 id="col1">Money Spent On Items:</h4></td>
+					
+					</tr>
+						<tr>
+							<td>Food</td>
+							<td>0</td>
+						</tr>
+						<tr>
+							<td>
+								Education
+							</td>
+							<td>
+								0
+							</td>
+						</tr>
+						<tr>
+							<td>Miscellaneous</td>
+							<td>0</td>
+						</tr>
+					</table>
+				</div>
+				<div id="piechart" class="alignpie" style="z-index: -40;"></div>
+			</div>
+		
+			<div id="Ecolumn2">
+				<p>
+					<h3>This Months Budget:</h3>
+					<h3>0</h3>
+				</p>
+				<p>
+					<h3>This Months Expenditure: </h3>
+					<h3>0</h3>
+				</p>
+			</div>
+		
+			<div id="Ecolumn3">
+					<div class="container" id="monthlypay">
+						<h2>Monthly Payments</h2>
+			
+						<div
+							class="container"
+							id="monthly"
+							style="border: 3px solid white; border-radius: 20px"
+						>
+							<ul id="monthlyList"></ul>
+						</div>
+					</div>
+			
+					<div class="container" id="annualpay">
+						<h2>Annual payments</h2>
+			
+						<div
+							class="container"
+							id="annual"
+							style="border: 3px solid white; border-radius: 20px"
+						>
+							<ul id="annualList"></ul>
+						</div>
+					</div>
+			</div>
+		</div>
 		</div>
 
 		<script>
@@ -116,7 +222,10 @@
 			let home = document.getElementById("home");
 			let main = document.getElementById("main");
 
-			// Buttons bellow ----------------------------------------
+			// Title ----------------------------------------------------
+			let title = document.getElementById("title");
+
+			// Buttons bellow --------------------------------------------
 			let taskbtn = document.getElementById("taskbtn");
 			let homebtn = document.getElementById("homebtn");
 			let expensesbtn = document.getElementById("expensesbtn");
@@ -130,6 +239,7 @@
 				for (var i = 0; i < nav.length; i++) {
 					nav[i].className = "";
 				}
+				title.innerHTML = "Tasks";
 				task.style.display = "block";
 				taskbtn.className = "active";
 			}
@@ -142,6 +252,7 @@
 					nav[i].className = "";
 				}
 
+				title.innerHTML = "Home";
 				home.style.display = "block";
 				homebtn.className = "active";
 			}
@@ -154,21 +265,20 @@
 				for (var i = 0; i < nav.length; i++) {
 					nav[i].className = "";
 				}
-
+				title.innerHTML = "Expenses";
 				expense.style.display = "block";
 				expensesbtn.className = "active";
 				// expensesbtn.className = "";
 			}
 
 			ipcRenderer.on("item:task", function (e, item) {
-				console.log(item);
 				const ul2 = document.getElementById("tw");
 				ul.innerHTML = "";
 				ul.className = "";
 				ul2.innerHTML = "";
 				ul2.className = "";
 				for (var i = 0; i < item.length; i++) {
-					console.log(item[i].task);
+					// console.log(item[i].task);
 					let ul = "";
 
 					if (item[i].time == "today") {
@@ -206,6 +316,35 @@
 				}
 				ipcRenderer.send("item:toDelete", e.target.innerHTML);
 			}
+
+			// Google Charts
+
+			google.charts.load("current", { packages: ["corechart"] });
+			google.charts.setOnLoadCallback(drawChart);
+
+			function drawChart() {
+				var data = google.visualization.arrayToDataTable([
+					["Task", "Hours per Day"],
+					["Food", 11],
+					["Eat", 2],
+					["Commute", 2],
+					["Watch TV", 2],
+					["Sleep", 7],
+				]);
+
+				var options = {
+					title: "My Daily Activities",
+					backgroundColor: "#1d2632",
+					chartArea: { width: 400, height: 300 },
+					legend: { textStyle: { color: "white" } },
+				};
+
+				var chart = new google.visualization.PieChart(
+					document.getElementById("piechart")
+				);
+
+				chart.draw(data, options);
+			}
 		</script>
 
 		<div class="centertitle screen" id="main">
@@ -213,3 +352,4 @@
 		</div>
 	</body>
 </html>
+

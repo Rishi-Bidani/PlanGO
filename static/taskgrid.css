@@ -34,3 +34,46 @@
 ::-webkit-scrollbar {
 	display: none;
 }
+
+/* Expense manager */
+
+#monthly {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	height: 40vh;
+	word-wrap: break-word;
+	padding-left: 30px;
+	padding-right: 30px;
+	padding-top: 20px;
+	text-align: left;
+	width: 20vw;
+}
+#annual {
+	grid-column: 2;
+	height: 40vh;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-left: 30px;
+	padding-right: 30px;
+	padding-top: 20px;
+	text-align: left;
+	word-wrap: break-word;
+	width: 20vw;
+}
+#budget {
+	margin-left: 20vw;
+	overflow-y: scroll;
+}
+#Ecolumn1 {
+	grid-column: 1;
+	margin-top: -25vh;
+}
+#Ecolumn2 {
+	grid-column: 2;
+	grid-row: 1;
+	margin-left: 2vw;
+}
+#Ecolumn3 {
+	grid-column: 3;
+	grid-row: 1;
+}

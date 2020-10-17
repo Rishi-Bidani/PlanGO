@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Add Budget</title>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+		/>
+		<style>
+			body {
+				background-color: #476d7c;
+				font-family: "Helvetica";
+			}
+			h2 {
+				margin-top: 10px;
+			}
+			label {
+				font-size: medium;
+			}
+			nav {
+				background-color: #254b62;
+			}
+			input[type="number"] {
+				color: white;
+				font-family: Helvetica;
+			}
+			label {
+				font-size: medium;
+			}
+			button {
+				margin-top: 30px;
+				margin-bottom: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<nav>
+			<div class="nav-wrapper">
+				<h2 class="brand-logo center">Add Budget</h2>
+			</div>
+		</nav>
+		<div class="container">
+			<form>
+				<label for="inputbudget">This Month's budget</label>
+				<input type="number" name="inputbudget" min="0" />
+				<center>
+					<button class="btn waves-effect waves-light" id="submit">
+						Submit
+					</button>
+				</center>
+				<label>*Submitting Will Replace previous budget</label>
+			</form>
+		</div>
+	</body>
+</html>
