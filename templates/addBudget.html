@@ -42,7 +42,7 @@
 		<div class="container">
 			<form>
 				<label for="inputbudget">This Month's budget</label>
-				<input type="number" name="inputbudget" min="0" />
+				<input type="number" id="inpbud" name="inputbudget" min="0" />
 				<center>
 					<button class="btn waves-effect waves-light" id="submit">
 						Submit
@@ -51,5 +51,19 @@
 				<label>*Submitting Will Replace previous budget</label>
 			</form>
 		</div>
+		<script>
+			const electron = require("electron");
+			const { ipcRenderer } = electron;
+
+			const form = document.querySelector("form");
+			form.addEventListener("submit", submitForm);
+
+			function submitForm(e) {
+				e.preventDefault();
+				let bud = document.querySelector("#inpbud").value;
+				ipcRenderer.send("item:budget", bud);
+			}
+			document.getElementById("submit").onclick = submitForm;
+		</script>
 	</body>
 </html>

@@ -4,6 +4,8 @@ const path = require("path");
 const { Menu } = require("electron/main");
 const { app, BrowserWindow, ipcMain, webContents } = electron;
 
+const fs = require("fs");
+
 let mainWindow;
 let addTask;
 
@@ -186,6 +188,16 @@ function createAddBudget() {
 	});
 	addBudget.setMenuBarVisibility(false);
 }
+
+//catch item:budget
+ipcMain.on("item:budget", function (e, item) {
+	let monthlyBudget = {
+		budget: item,
+	};
+	let data = JSON.stringify(monthlyBudget);
+	fs.writeFileSync("budget.json", data);
+	addBudget.close();
+});
 
 // Create Menu Template
 
