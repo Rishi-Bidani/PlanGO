@@ -59,7 +59,8 @@
 			#piechart {
 				grid-column: 1;
 				grid-row: 2;
-				margin-top: 30vh;
+				margin-top: 25vh;
+				margin-left: 5vw;
 			}
 			#col1{
 				grid-row: 1;
@@ -74,6 +75,7 @@
 			td{
 				padding-right: 40px;
 			}
+			svg > g > g:last-child { pointer-events: none }
 		</style>
 	</head>
 	<body>
@@ -164,6 +166,15 @@
 							</td>
 						</tr>
 						<tr>
+							<td>Commute</td><td>0</td>
+						</tr>
+						<tr>
+							<td>Phone Bills</td><td>0</td>
+						</tr>
+						<tr>
+							<td>Other Bills</td><td>0</td>
+						</tr>
+						<tr>
 							<td>Miscellaneous</td>
 							<td>0</td>
 						</tr>
@@ -175,7 +186,7 @@
 			<div id="Ecolumn2">
 				<p>
 					<h3>This Months Budget:</h3>
-					<h3>0</h3>
+					<h3 id="monthlybudget">0</h3>
 				</p>
 				<p>
 					<h3>This Months Expenditure: </h3>
@@ -215,6 +226,7 @@
 			const path = require("path");
 			const electron = require("electron");
 			const { ipcRenderer } = electron;
+			const fs = require('fs');
 
 			// Screens bellow ------------------------------------------
 			let allscreens = document.getElementsByClassName("screen");
@@ -268,9 +280,13 @@
 				title.innerHTML = "Expenses";
 				expense.style.display = "block";
 				expensesbtn.className = "active";
-				// expensesbtn.className = "";
-			}
 
+				var jsonData = require('./budget.json');
+				console.log(jsonData)
+				var budget = document.getElementById("monthlybudget");
+				budget.innerHTML = jsonData.budget;
+			}
+		
 			ipcRenderer.on("item:task", function (e, item) {
 				const ul2 = document.getElementById("tw");
 				ul.innerHTML = "";
@@ -326,10 +342,11 @@
 				var data = google.visualization.arrayToDataTable([
 					["Task", "Hours per Day"],
 					["Food", 11],
-					["Eat", 2],
-					["Commute", 2],
-					["Watch TV", 2],
-					["Sleep", 7],
+					["Education", 2],
+					["commute", 2],
+					["Phone bill", 2],
+					["Other bills", 7],
+					["Miscellaneous", 5]
 				]);
 
 				var options = {
@@ -352,4 +369,5 @@
 		</div>
 	</body>
 </html>
+
 
