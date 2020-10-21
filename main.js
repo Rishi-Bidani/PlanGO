@@ -6,6 +6,8 @@ const { app, BrowserWindow, ipcMain, webContents } = electron;
 
 const fs = require("fs");
 
+jsonData = require("./budget.json");
+
 let mainWindow;
 let addTask;
 
@@ -37,7 +39,10 @@ app.on("ready", function () {
 		})
 	);
 
+	// send data to mainWindow from here
 	updateTasks(taskContents);
+	console.log("sent");
+	sendBudget(jsonData.budget);
 
 	//Quit app when closed
 	mainWindow.on("closed", function () {
@@ -139,7 +144,7 @@ function createAddExpense() {
 	);
 	// Garbage collection
 	addExpense.on("close", function () {
-		addTask = null;
+		addExpense = null;
 	});
 	addExpense.setMenuBarVisibility(false);
 }
@@ -191,13 +196,46 @@ function createAddBudget() {
 
 //catch item:budget
 ipcMain.on("item:budget", function (e, item) {
+	console.log(item);
+	var jsonData = require("./budget.json");
 	let monthlyBudget = {
 		budget: item,
+		expenditure: jsonData.expenditure,
 	};
+	console.log(item);
 	let data = JSON.stringify(monthlyBudget);
+	console.log(data);
 	fs.writeFileSync("budget.json", data);
+	sendBudget(item);
+	globalBudget = item;
 	addBudget.close();
 });
+
+// check for refresh budget
+
+ipcMain.on("restart:budget", function (e, item) {
+	sendBudget(globalBudget);
+	mainWindow.reload();
+});
+
+function sendBudget(budgetData) {
+	let s = 0;
+
+	knex("expense")
+		.sum("amount as amt")
+		.then((amt) => {
+			for (var i = 0; i < amt.length; i++) {
+				s = amt[i]["amt"];
+			}
+			console.log("budgetData: ", budgetData);
+			let monthlyexpenditure = {
+				budget: budgetData,
+				expenditure: s,
+			};
+			let expenData = JSON.stringify(monthlyexpenditure);
+			fs.writeFileSync("budget.json", expenData);
+		});
+}
 
 // Create Menu Template
 

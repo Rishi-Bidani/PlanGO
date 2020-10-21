@@ -4,6 +4,7 @@
 		<title>PlanGO</title>
 
 		<link rel="stylesheet" href="static/sidenav.css" />
+
 		<link
 			rel="stylesheet"
 			href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -186,11 +187,11 @@
 			<div id="Ecolumn2">
 				<p>
 					<h3>This Months Budget:</h3>
-					<h3 id="monthlybudget">0</h3>
+					<h3 id="monthlybudget">0</h3><button class="btn btn-primary" id="refresh" onclick="restart">Refresh</button>
 				</p>
 				<p>
 					<h3>This Months Expenditure: </h3>
-					<h3>0</h3>
+					<h3 id="monthexpen">0</h3>
 				</p>
 			</div>
 		
@@ -284,7 +285,10 @@
 				var jsonData = require('./budget.json');
 				console.log(jsonData)
 				var budget = document.getElementById("monthlybudget");
+				let expen = document.getElementById("monthexpen");
+
 				budget.innerHTML = jsonData.budget;
+				expen.innerHTML = jsonData.expenditure;
 			}
 		
 			ipcRenderer.on("item:task", function (e, item) {
@@ -311,7 +315,7 @@
 					li.appendChild(itemText);
 					ul.appendChild(li);
 				}
-				showtasks();
+				// showtasks();
 			});
 
 			// //Remove Items
@@ -362,6 +366,29 @@
 
 				chart.draw(data, options);
 			}
+			function restart(){
+				ipcRenderer.send("restart:budget", "refresh")
+				showExpenses();
+			}
+			ipcRenderer.on("budget:restart", function(e, item){
+				console.log(item);
+				showExpenses();
+			})
+
+			ipcRenderer.on("which:page", function(e, item){
+				console.log(item);
+				if(item=="expenses"){
+					showExpenses();
+				}else{
+					showtasks();
+				}
+			})
+			ipcRenderer.on("monthly:budget", function(e, item){
+				let expen = document.getElementById("monthexpen");
+				expen.innerHTML = item
+			})
+
+			document.getElementById("refresh").onclick = restart;
 		</script>
 
 		<div class="centertitle screen" id="main">
