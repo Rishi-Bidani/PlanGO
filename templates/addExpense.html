@@ -60,6 +60,9 @@
 									<option value="">--Select Group--</option>
 									<option>Food</option>
 									<option>Education</option>
+									<option>Commute</option>
+									<option>Phone Bill</option>
+									<option>Other Bills</option>
 									<option>Miscellaneous</option>
 								</select>
 							</td>
@@ -109,7 +112,15 @@
 				var cell3 = row.insertCell(2);
 				var inputItem3 = document.createElement("select");
 				inputItem3.setAttribute("name", "group[]");
-				options = ["--Select Group--", "Food", "Education", "Miscellaneous"];
+				options = [
+					"--Select Group--",
+					"Food",
+					"Education",
+					"commute",
+					"Phone Bill",
+					"Other Bills",
+					"Miscellaneous",
+				];
 				for (var i = 0; i < options.length; i++) {
 					const option = document.createElement("option");
 

@@ -60,8 +60,13 @@
 			#piechart {
 				grid-column: 1;
 				grid-row: 2;
-				margin-top: 25vh;
-				margin-left: 5vw;
+				margin-top: 20vh;
+				margin-left: 1vw;
+			}
+			@media only screen and (max-height: 600px){
+				#piechart{
+					margin-top: 10vh;
+				}
 			}
 			#col1{
 				grid-row: 1;
@@ -75,6 +80,18 @@
 			}
 			td{
 				padding-right: 40px;
+			}
+			h1{
+				font-size: 5vh;
+			}
+			h2{
+				font-size: 3.5vh;
+			}
+			h3{
+				font-size: 3vh;
+			}
+			h4{
+				font-size: 2.5vh;
 			}
 			svg > g > g:last-child { pointer-events: none }
 		</style>
@@ -184,7 +201,7 @@
 				<div id="piechart" class="alignpie" style="z-index: -40;"></div>
 			</div>
 		
-			<div id="Ecolumn2">
+			<div id="Ecolumn2" style="z-index: 10;">
 				<p>
 					<h3>This Months Budget:</h3>
 					<h3 id="monthlybudget">0</h3><button class="btn btn-primary" id="refresh" onclick="restart">Refresh</button>

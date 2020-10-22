@@ -21,6 +21,82 @@ var knex = require("knex")({
 	},
 });
 
+// class to make changes to json
+class jsonUpdates {
+	constructor() {
+		this.budget = jsonData.budget;
+		this.expenditure = jsonData.expenditure;
+		this.food = jsonData.food;
+		this.commute = jsonData.commute;
+		this.education = jsonData.education;
+		this.phonebill = jsonData.phonebill;
+		this.otherbills = jsonData.otherbills;
+		this.miscellaneous = jsonData.miscellaneous;
+
+		this.mainFile = {
+			budget: this.budget,
+			expenditure: this.expenditure,
+			food: this.food,
+			education: this.education,
+			commute: this.commute,
+			phonebill: this.phonebill,
+			otherbills: this.otherbills,
+			miscellaneous: this.miscellaneous,
+		};
+		let data = JSON.stringify(this.mainFile, null, 2);
+		fs.writeFileSync("budget.json", data);
+	}
+	changesToBudget(bud) {
+		this.budget = bud;
+		this.mainFile.budget = this.budget;
+		let data = JSON.stringify(this.mainFile, null, 2);
+		fs.writeFileSync("budget.json", data);
+	}
+	changesToExpenditure(expen) {
+		this.expenditure = expen;
+		this.mainFile.expenditure = this.expenditure;
+		let data = JSON.stringify(this.mainFile, null, 2);
+		fs.writeFileSync("budget.json", data);
+	}
+	changesToFood(foo) {
+		this.food = foo;
+		this.mainFile.food = this.food;
+		let data = JSON.stringify(this.mainFile, null, 2);
+		fs.writeFileSync("budget.json", data);
+	}
+	changesToEducation(edu) {
+		this.education = edu;
+		this.mainFile.education = this.education;
+		let data = JSON.stringify(this.mainFile, null, 2);
+		fs.writeFileSync("budget.json", data);
+	}
+	changesToCommute(com) {
+		this.commute = com;
+		this.mainFile.commute = this.commute;
+		let data = JSON.stringify(this.mainFile, null, 2);
+		fs.writeFileSync("budget.json", data);
+	}
+	changesToPhonebill(pho) {
+		this.phonebill = pho;
+		this.mainFile.phonebill = this.phonebill;
+		let data = JSON.stringify(this.mainFile, null, 2);
+		fs.writeFileSync("budget.json", data);
+	}
+	changesToOtherbills(ob) {
+		this.otherbills = ob;
+		this.mainFile.otherbills = this.otherbills;
+		let data = JSON.stringify(this.mainFile, null, 2);
+		fs.writeFileSync("budget.json", data);
+	}
+	changesToMiscellaneous(misc) {
+		this.miscellaneous = misc;
+		this.mainFile.miscellaneous = this.miscellaneous;
+		let data = JSON.stringify(this.mainFile, null, 2);
+		fs.writeFileSync("budget.json", data);
+	}
+}
+allJsonChanges = new jsonUpdates();
+
 //listen for the app to be ready
 
 app.on("ready", function () {
@@ -41,8 +117,7 @@ app.on("ready", function () {
 
 	// send data to mainWindow from here
 	updateTasks(taskContents);
-	console.log("sent");
-	sendBudget(jsonData.budget);
+	groupExpenses();
 
 	//Quit app when closed
 	mainWindow.on("closed", function () {
@@ -170,6 +245,7 @@ ipcMain.on("item:expenses", function (e, item) {
 				console.error(error);
 			});
 	}
+	groupExpenses();
 });
 
 // add budget
@@ -196,47 +272,103 @@ function createAddBudget() {
 	addBudget.setMenuBarVisibility(false);
 }
 
-globalBudget = 0;
 //catch item:budget
 ipcMain.on("item:budget", function (e, item) {
-	console.log(item);
-	var jsonData = require("./budget.json");
-	let monthlyBudget = {
-		budget: item,
-		expenditure: jsonData.expenditure,
-	};
-	console.log(item);
-	let data = JSON.stringify(monthlyBudget);
-	console.log(data);
-	fs.writeFileSync("budget.json", data);
-	sendBudget(item);
-	globalBudget = item;
+	allJsonChanges.changesToBudget(item);
+	groupExpenses();
 	addBudget.close();
 });
 
 // check for refresh budget
 
 ipcMain.on("restart:budget", function (e, item) {
-	sendBudget(globalBudget);
+	// groupExpenses();
 	mainWindow.reload();
 });
 
-function sendBudget(budgetData) {
-	let s = 0;
+// =======================
 
+// Edit the different group expenses
+
+function groupExpenses() {
+	// expenditure
 	knex("expense")
 		.sum("amount as amt")
 		.then((amt) => {
 			for (var i = 0; i < amt.length; i++) {
 				s = amt[i]["amt"];
 			}
-			console.log("budgetData: ", budgetData);
-			let monthlyexpenditure = {
-				budget: budgetData,
-				expenditure: s,
-			};
-			let expenData = JSON.stringify(monthlyexpenditure);
-			fs.writeFileSync("budget.json", expenData);
+			allJsonChanges.changesToExpenditure(s);
+		});
+
+	// food
+	knex("expense")
+		.sum("amount as famt")
+		.where({ group: "Food" })
+		.then((famt) => {
+			for (var i = 0; i < famt.length; i++) {
+				f = famt[i]["famt"];
+			}
+			allJsonChanges.changesToFood(f);
+		});
+
+	// Education
+	knex("expense")
+		.sum("amount as eamt")
+		.where({ group: "Education" })
+		.then((eamt) => {
+			for (var i = 0; i < eamt.length; i++) {
+				e = eamt[i]["eamt"];
+			}
+			allJsonChanges.changesToEducation(e);
+		});
+
+	// Commute
+	knex("expense")
+		.sum("amount as camt")
+		.where({ group: "Commute" })
+		.then((camt) => {
+			// console.log(camt);
+			for (var i = 0; i < camt.length; i++) {
+				c = camt[i]["camt"];
+			}
+			allJsonChanges.changesToCommute(c);
+		});
+
+	// Phone Bill
+	knex("expense")
+		.sum("amount as pamt")
+		.where({ group: "Phone Bill" })
+		.then((pamt) => {
+			// console.log(camt);
+			for (var i = 0; i < pamt.length; i++) {
+				p = pamt[i]["pamt"];
+			}
+			allJsonChanges.changesToPhonebill(p);
+		});
+
+	// Other Bills
+	knex("expense")
+		.sum("amount as oamt")
+		.where({ group: "Other Bills" })
+		.then((oamt) => {
+			// console.log(camt);
+			for (var i = 0; i < oamt.length; i++) {
+				o = oamt[i]["oamt"];
+			}
+			allJsonChanges.changesToOtherbills(o);
+		});
+
+	// Miscellaneous
+	knex("expense")
+		.sum("amount as mamt")
+		.where({ group: "Miscellaneous" })
+		.then((mamt) => {
+			// console.log(camt);
+			for (var i = 0; i < mamt.length; i++) {
+				m = mamt[i]["mamt"];
+			}
+			allJsonChanges.changesToMiscellaneous(m);
 		});
 }
 
@@ -328,6 +460,3 @@ if (process.env.NODE_ENV != "production") {
 		],
 	});
 }
-// var reload = () => {
-// 	getCurrentWindow().reload();
-// };
