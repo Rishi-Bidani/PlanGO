@@ -1,1 +1,10 @@
-{"budget":"10","expenditure":40}
+{
+  "budget": "5",
+  "expenditure": 50,
+  "food": 0,
+  "education": 0,
+  "commute": 0,
+  "phonebill": 0,
+  "otherbills": 0,
+  "miscellaneous": 0
+}
