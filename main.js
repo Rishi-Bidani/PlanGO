@@ -158,16 +158,18 @@ ipcMain.on("item:expenses", function (e, item) {
 	addExpense.close();
 	for (let i = 0; i < amount.length; i++) {
 		var insertExpenses = { amount: amount[i], date: date[i], group: group[i] };
+		// console.log(insertExpenses);
+
+		knex
+			.insert(insertExpenses)
+			.into("expense")
+			.then(() => {
+				console.log("done");
+			})
+			.catch(function (error) {
+				console.error(error);
+			});
 	}
-	knex
-		.insert(insertExpenses)
-		.into("expense")
-		.then(() => {
-			console.log("done");
-		})
-		.catch(function (error) {
-			console.error(error);
-		});
 });
 
 // add budget
@@ -194,6 +196,7 @@ function createAddBudget() {
 	addBudget.setMenuBarVisibility(false);
 }
 
+globalBudget = 0;
 //catch item:budget
 ipcMain.on("item:budget", function (e, item) {
 	console.log(item);
