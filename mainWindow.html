@@ -110,7 +110,7 @@
 		<div id="levelgrid">
 			<img src="assets/star.png" alt="star" class="levelup" />
 			<div class="progress progress-level">
-				<div class="progress-bar bg-warning" style="width: 40%"></div>
+				<div class="progress-bar bg-warning" id="level" style="width: 0%"></div>
 			</div>
 			<div id="maintitle">
 				<h1 class="centertitle" style="margin-left: 0px" id="title">Default</h1>
@@ -260,6 +260,18 @@
 			let homebtn = document.getElementById("homebtn");
 			let expensesbtn = document.getElementById("expensesbtn");
 
+
+			// level stuff
+			function level(){
+				let xplevel = document.getElementById("level")
+				if(jsonData.experience <= 10){
+					w = jsonData.experience*10;
+					xplevel.style.width = `${w}%`;
+				}
+			}
+
+			level();
+
 			nav = [taskbtn, homebtn, expensesbtn];
 
 			function showtasks() {
@@ -364,6 +376,7 @@
 				e.target.remove();
 				if (ul.children.length == 0) {
 					ul.className = "";
+					level();
 				}
 				ipcRenderer.send("item:toDelete", e.target.innerHTML);
 			}

@@ -32,6 +32,7 @@ class jsonUpdates {
 		this.phonebill = jsonData.phonebill;
 		this.otherbills = jsonData.otherbills;
 		this.miscellaneous = jsonData.miscellaneous;
+		this.experience = jsonData.experience;
 
 		this.mainFile = {
 			budget: this.budget,
@@ -42,6 +43,7 @@ class jsonUpdates {
 			phonebill: this.phonebill,
 			otherbills: this.otherbills,
 			miscellaneous: this.miscellaneous,
+			experience: this.experience,
 		};
 		let data = JSON.stringify(this.mainFile, null, 2);
 		fs.writeFileSync("budget.json", data);
@@ -91,6 +93,12 @@ class jsonUpdates {
 	changesToMiscellaneous(misc) {
 		this.miscellaneous = misc;
 		this.mainFile.miscellaneous = this.miscellaneous;
+		let data = JSON.stringify(this.mainFile, null, 2);
+		fs.writeFileSync("budget.json", data);
+	}
+	changesToExperience(xp) {
+		this.experience = xp;
+		this.mainFile.experience = this.experience;
 		let data = JSON.stringify(this.mainFile, null, 2);
 		fs.writeFileSync("budget.json", data);
 	}
@@ -198,6 +206,9 @@ ipcMain.on("item:toDelete", function (e, item) {
 			updateTasks(taskContents);
 		});
 	knex("sqlite_sequence").where("name", "task").update({ seq: 0 }).then();
+	let xpl = jsonData.experience;
+	xpl += 2;
+	allJsonChanges.changesToExperience(xpl);
 });
 
 // end collection of toDelete ===================================================================
