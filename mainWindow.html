@@ -168,33 +168,33 @@
 				<div>
 					<table>
 					<tr>
-					<td><h4 id="col1">Money Spent On Items:</h4></td>
+					<td><h4 id="col1"><u>Money Spent On Items:</u></h4></td>
 					
 					</tr>
 						<tr>
 							<td>Food</td>
-							<td>0</td>
+							<td id="foodValue">0</td>
 						</tr>
 						<tr>
 							<td>
 								Education
 							</td>
-							<td>
+							<td id="EduValue" >
 								0
 							</td>
 						</tr>
 						<tr>
-							<td>Commute</td><td>0</td>
+							<td>Commute</td><td id="CommuteValue">0</td>
 						</tr>
 						<tr>
-							<td>Phone Bills</td><td>0</td>
+							<td>Phone Bills</td><td id="pbValue">0</td>
 						</tr>
 						<tr>
-							<td>Other Bills</td><td>0</td>
+							<td>Other Bills</td><td id="obValue">0</td>
 						</tr>
 						<tr>
 							<td>Miscellaneous</td>
-							<td>0</td>
+							<td id="MiscValue">0</td>
 						</tr>
 					</table>
 				</div>
@@ -245,7 +245,7 @@
 			const electron = require("electron");
 			const { ipcRenderer } = electron;
 			const fs = require('fs');
-
+			var jsonData = require('./budget.json');
 			// Screens bellow ------------------------------------------
 			let allscreens = document.getElementsByClassName("screen");
 			let task = document.getElementById("tasks");
@@ -306,6 +306,20 @@
 
 				budget.innerHTML = jsonData.budget;
 				expen.innerHTML = jsonData.expenditure;
+
+				
+				var foodValue = document.getElementById("foodValue")
+				var eduValue = document.getElementById("EduValue")
+				var commuteValue = document.getElementById("CommuteValue")
+				var pbValue = document.getElementById("pbValue")
+				var obValue = document.getElementById("obValue")
+				var miscValue = document.getElementById("MiscValue")
+				foodValue.innerHTML = jsonData.food;
+				eduValue.innerHTML = jsonData.education;
+				commuteValue.innerHTML = jsonData.commute;
+				pbValue.innerHTML = jsonData.phonebill;
+				obValue.innerHTML = jsonData.otherbills;
+				miscValue.innerHTML = jsonData.miscellaneous;
 			}
 		
 			ipcRenderer.on("item:task", function (e, item) {
@@ -362,12 +376,12 @@
 			function drawChart() {
 				var data = google.visualization.arrayToDataTable([
 					["Task", "Hours per Day"],
-					["Food", 11],
-					["Education", 2],
-					["commute", 2],
-					["Phone bill", 2],
-					["Other bills", 7],
-					["Miscellaneous", 5]
+					["Food", jsonData.food],
+					["Education", jsonData.education],
+					["commute", jsonData.commute],
+					["Phone bill", jsonData.phonebill],
+					["Other bills", jsonData.otherbills],
+					["Miscellaneous", jsonData.miscellaneous]
 				]);
 
 				var options = {
@@ -406,6 +420,8 @@
 			})
 
 			document.getElementById("refresh").onclick = restart;
+
+
 		</script>
 
 		<div class="centertitle screen" id="main">
