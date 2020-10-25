@@ -33,6 +33,19 @@
 				grid-row: 1;
 				grid-column: 1;
 			}
+			.leveluptxt{
+				margin-left: 150px;
+				height: 11vh;
+				grid-row: 1;
+				grid-column: 1;
+				color: black;
+				margin-top: 4vh;
+				padding-left: 2.2vw;
+			}
+			.marlft{
+				margin-left: 150px;
+			}
+
 			.progress-level {
 				margin-left: 200px;
 				width: 30vw;
@@ -109,6 +122,7 @@
 
 		<div id="levelgrid">
 			<img src="assets/star.png" alt="star" class="levelup" />
+			<h4 class="leveluptxt marlft" style="z-index: 10;" id="leveltxt">0</h4>
 			<div class="progress progress-level">
 				<div class="progress-bar bg-warning" id="level" style="width: 0%"></div>
 			</div>
@@ -203,11 +217,13 @@
 		
 			<div id="Ecolumn2" style="z-index: 10;">
 				<p>
-					<h3>This Months Budget:</h3>
-					<h3 id="monthlybudget">0</h3><button class="btn btn-primary" id="refresh" onclick="restart">Refresh</button>
+					<h3>Your Budget:</h3>
+					<h3 id="monthlybudget">0</h3>
+					<button class="btn btn-primary btn1" id="refresh" onclick="restart">Refresh</button>
+					<button class="btn btn-primary btn1" id="reset" onclick="reset">Reset</button>
 				</p>
 				<p>
-					<h3>This Months Expenditure: </h3>
+					<h3>Your Expenditure: </h3>
 					<h3 id="monthexpen">0</h3>
 				</p>
 			</div>
@@ -263,10 +279,14 @@
 
 			// level stuff
 			function level(){
-				let xplevel = document.getElementById("level")
-				if(jsonData.experience <= 10){
+				let xplevel = document.getElementById("level");
+				let leveltxt = document.getElementById("leveltxt");
+				leveltxt.innerHTML = jsonData.level;
+				if(jsonData.experience < 10){
 					w = jsonData.experience*10;
 					xplevel.style.width = `${w}%`;
+				}else if(jsonData.experience >= 10){
+					ipcRenderer.send("change:exp:0-&&-level:+1", "change");
 				}
 			}
 
@@ -326,12 +346,12 @@
 				var pbValue = document.getElementById("pbValue")
 				var obValue = document.getElementById("obValue")
 				var miscValue = document.getElementById("MiscValue")
-				foodValue.innerHTML = jsonData.food;
-				eduValue.innerHTML = jsonData.education;
-				commuteValue.innerHTML = jsonData.commute;
-				pbValue.innerHTML = jsonData.phonebill;
-				obValue.innerHTML = jsonData.otherbills;
-				miscValue.innerHTML = jsonData.miscellaneous;
+				foodValue.innerHTML = jsonData.food == null ? 0 : jsonData.food;
+				eduValue.innerHTML = jsonData.education == null ? 0 : jsonData.education;
+				commuteValue.innerHTML = jsonData.commute == null ? 0 : jsonData.commute;
+				pbValue.innerHTML = jsonData.phonebill == null ? 0 : jsonData.phonebill;
+				obValue.innerHTML = jsonData.otherbills == null ? 0 : jsonData.otherbills;
+				miscValue.innerHTML = jsonData.miscellaneous == null ? 0 : jsonData.miscellaneous;
 			}
 		
 			ipcRenderer.on("item:task", function (e, item) {
@@ -358,7 +378,6 @@
 					li.appendChild(itemText);
 					ul.appendChild(li);
 				}
-				// showtasks();
 			});
 
 			// //Remove Items
@@ -381,20 +400,36 @@
 				ipcRenderer.send("item:toDelete", e.target.innerHTML);
 			}
 
+			ipcRenderer.on("whichWindow", function(e, item){
+				if(item == "tasks"){
+					showtasks();
+				}else if(item == "expenses"){
+					showExpenses();
+				}else{
+					showhome();
+				}
+			})	
+
 			// Google Charts
 
 			google.charts.load("current", { packages: ["corechart"] });
 			google.charts.setOnLoadCallback(drawChart);
 
 			function drawChart() {
+				f = jsonData.food == 0 ? 0.1 : jsonData.food;
+				e = jsonData.education == 0 ? 0.1 : jsonData.education;
+				c = jsonData.commute == 0 ? 0.1 : jsonData.commute;
+				p = jsonData.phonebill == 0 ? 0.1 : jsonData.phonebill;
+				o = jsonData.otherbills == 0 ? 0.1 : jsonData.otherbills;
+				m = jsonData.miscellaneous == 0 ? 0.1 : jsonData.miscellaneous;
 				var data = google.visualization.arrayToDataTable([
 					["Task", "Hours per Day"],
-					["Food", jsonData.food],
-					["Education", jsonData.education],
-					["commute", jsonData.commute],
-					["Phone bill", jsonData.phonebill],
-					["Other bills", jsonData.otherbills],
-					["Miscellaneous", jsonData.miscellaneous]
+					["Food", f],
+					["Education", e],
+					["commute", c],
+					["Phone bill", p],
+					["Other bills", o],
+					["Miscellaneous", m]
 				]);
 
 				var options = {
@@ -412,21 +447,11 @@
 			}
 			function restart(){
 				ipcRenderer.send("restart:budget", "refresh")
-				showExpenses();
 			}
 			ipcRenderer.on("budget:restart", function(e, item){
 				console.log(item);
-				showExpenses();
 			})
 
-			ipcRenderer.on("which:page", function(e, item){
-				console.log(item);
-				if(item=="expenses"){
-					showExpenses();
-				}else{
-					showtasks();
-				}
-			})
 			ipcRenderer.on("monthly:budget", function(e, item){
 				let expen = document.getElementById("monthexpen");
 				expen.innerHTML = item
@@ -434,7 +459,13 @@
 
 			document.getElementById("refresh").onclick = restart;
 
+			showhome();
 
+			function reset(){
+				ipcRenderer.send("resetAll", "reset")
+			}
+
+			document.getElementById("reset").onclick = reset;
 		</script>
 
 		<div class="centertitle screen" id="main">

@@ -33,6 +33,7 @@ class jsonUpdates {
 		this.otherbills = jsonData.otherbills;
 		this.miscellaneous = jsonData.miscellaneous;
 		this.experience = jsonData.experience;
+		this.level = jsonData.level;
 
 		this.mainFile = {
 			budget: this.budget,
@@ -44,6 +45,7 @@ class jsonUpdates {
 			otherbills: this.otherbills,
 			miscellaneous: this.miscellaneous,
 			experience: this.experience,
+			level: this.level,
 		};
 		let data = JSON.stringify(this.mainFile, null, 2);
 		fs.writeFileSync("budget.json", data);
@@ -96,14 +98,72 @@ class jsonUpdates {
 		let data = JSON.stringify(this.mainFile, null, 2);
 		fs.writeFileSync("budget.json", data);
 	}
-	changesToExperience(xp) {
-		this.experience = xp;
+	changesToExperience() {
+		this.experience = this.experience + 1.1;
 		this.mainFile.experience = this.experience;
 		let data = JSON.stringify(this.mainFile, null, 2);
 		fs.writeFileSync("budget.json", data);
 	}
+	changesToExperience0() {
+		this.experience = 0;
+		this.mainFile.experience = this.experience;
+		let data = JSON.stringify(this.mainFile, null, 2);
+		fs.writeFileSync("budget.json", data);
+	}
+	changesToLevel() {
+		this.level = this.level + 1;
+		this.mainFile.level = this.level;
+		let data = JSON.stringify(this.mainFile, null, 2);
+		fs.writeFileSync("budget.json", data);
+	}
+	reset() {
+		this.budget = 0;
+		this.expenditure = 0;
+		this.food = 0;
+		this.commute = 0;
+		this.education = 0;
+		this.phonebill = 0;
+		this.otherbills = 0;
+		this.miscellaneous = 0;
+		this.experience = jsonData.experience;
+		this.level = jsonData.level;
+
+		this.mainFile = {
+			budget: this.budget,
+			expenditure: this.expenditure,
+			food: this.food,
+			education: this.education,
+			commute: this.commute,
+			phonebill: this.phonebill,
+			otherbills: this.otherbills,
+			miscellaneous: this.miscellaneous,
+			experience: this.experience,
+			level: this.level,
+		};
+		let data = JSON.stringify(this.mainFile, null, 2);
+		fs.writeFileSync("budget.json", data);
+		knex("expense")
+			.del()
+			.then(() => {});
+	}
 }
 allJsonChanges = new jsonUpdates();
+
+class whichWindow {
+	showTasks() {
+		mainWindow.reload();
+		mainWindow.webContents.on("did-finish-load", () => {
+			mainWindow.webContents.send("whichWindow", "tasks");
+		});
+	}
+	showExpenses() {
+		mainWindow.webContents.on("did-finish-load", () => {
+			mainWindow.webContents.send("whichWindow", "expenses");
+		});
+	}
+}
+
+let switchWindow = new whichWindow();
 
 //listen for the app to be ready
 
@@ -150,7 +210,6 @@ function updateTasks(arr) {
 			mainWindow.webContents.on("did-finish-load", () => {
 				mainWindow.webContents.send("item:task", arr);
 			});
-			mainWindow.reload();
 		})
 		.catch(function (error) {
 			console.error(error);
@@ -180,6 +239,12 @@ function createAddTask() {
 	addTask.setMenuBarVisibility(false);
 }
 
+// level stuff
+ipcMain.on("change:exp:0-&&-level:+1", function (e, item) {
+	allJsonChanges.changesToExperience0();
+	allJsonChanges.changesToLevel();
+});
+
 //catch all values from item:values =============================================================
 
 ipcMain.on("item:values", function (e, item) {
@@ -190,6 +255,7 @@ ipcMain.on("item:values", function (e, item) {
 		.into("task")
 		.then(function (id) {
 			updateTasks(taskContents);
+			switchWindow.showTasks();
 		})
 		.catch(function (error) {
 			console.error(error);
@@ -204,11 +270,10 @@ ipcMain.on("item:toDelete", function (e, item) {
 		.del()
 		.then(() => {
 			updateTasks(taskContents);
+			allJsonChanges.changesToExperience();
+			switchWindow.showTasks();
 		});
 	knex("sqlite_sequence").where("name", "task").update({ seq: 0 }).then();
-	let xpl = jsonData.experience;
-	xpl += 2;
-	allJsonChanges.changesToExperience(xpl);
 });
 
 // end collection of toDelete ===================================================================
@@ -295,9 +360,15 @@ ipcMain.on("item:budget", function (e, item) {
 ipcMain.on("restart:budget", function (e, item) {
 	// groupExpenses();
 	mainWindow.reload();
+	switchWindow.showExpenses();
 });
 
 // =======================
+
+// reset all expenses
+ipcMain.on("resetAll", function (e, item) {
+	allJsonChanges.reset();
+});
 
 // Edit the different group expenses
 
