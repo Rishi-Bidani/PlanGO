@@ -355,41 +355,45 @@
 			}
 		
 			ipcRenderer.on("item:task", function (e, item) {
+				const ul1 = document.getElementById("t");
 				const ul2 = document.getElementById("tw");
-				ul.innerHTML = "";
-				ul.className = "";
+
+				ul1.innerHTML = "";
+				ul1.className = "";
 				ul2.innerHTML = "";
 				ul2.className = "";
+				
 				for (var i = 0; i < item.length; i++) {
 					// console.log(item[i].task);
-					let ul = "";
+					let ult = "";
 
 					if (item[i].time == "today") {
-						ul = document.getElementById("t");
+						ult = document.getElementById("t");
 					} else {
-						ul = document.getElementById("tw");
+						ult = document.getElementById("tw");
 					}
 					const li = document.createElement("li");
-					ul.className = "collection";
+					ult.className = "collection";
 					li.className = "collection-item";
 
 					const itemText = document.createTextNode(item[i].task);
 
 					li.appendChild(itemText);
-					ul.appendChild(li);
+					ult.appendChild(li);
 				}
 			});
 
 			// //Remove Items
 			const ul = document.querySelector("ul");
+			const ul1 = document.getElementById("t");
 			const ul2 = document.getElementById("tw");
 
 			const li = document.createElement("li");
 
-			ul.addEventListener("dblclick", removeItem);
-			ul2.addEventListener("dblclick", removeItem);
+			ul1.addEventListener("dblclick", removeItem1);
+			ul2.addEventListener("dblclick", removeItem1);
 
-			function removeItem(e) {
+			function removeItem1(e) {
 				// var myVal = e.target.innerHTML;
 				// console.log(myVal);
 				e.target.remove();
@@ -463,6 +467,50 @@
 
 			function reset(){
 				ipcRenderer.send("resetAll", "reset")
+			}
+
+
+			// monthly and annual list
+
+			ipcRenderer.on("item:recur", function (e, item) {
+				const al = document.getElementById("annualList")
+				const ml = document.getElementById("monthlyList")
+				al.innerHTML = "";
+				al.className = "";
+				ml.innerHTML = "";
+				ml.className = "";
+				for (var i = 0; i < item.length; i++) {
+					let ull = "";
+
+					if (item[i].time == "monthly") {
+						ull = document.getElementById("monthlyList");
+					} else {
+						ull = document.getElementById("annualList");
+					}
+					const li = document.createElement("li");
+					ull.className = "collection";
+					li.className = "collection-item";
+
+					const itemText = document.createTextNode(item[i].value);
+
+					li.appendChild(itemText);
+					ull.appendChild(li);
+				}
+			});
+
+			// //Remove Items for payment list
+			const al = document.getElementById("annualList");
+			const ml = document.getElementById("monthlyList");
+
+			al.addEventListener("dblclick", removeItem);
+			ml.addEventListener("dblclick", removeItem);
+
+			function removeItem(e) {
+				e.target.remove();
+				if (ul.children.length == 0) {
+					ul.className = "";
+				}
+				ipcRenderer.send("item:toDeleteList", e.target.innerHTML);
 			}
 
 			document.getElementById("reset").onclick = reset;

@@ -157,10 +157,29 @@ class whichWindow {
 		});
 	}
 	showExpenses() {
+		mainWindow.reload();
 		mainWindow.webContents.on("did-finish-load", () => {
 			mainWindow.webContents.send("whichWindow", "expenses");
 		});
 	}
+}
+
+function updateRecur() {
+	let arr = [];
+	knex
+		.select("value", "time")
+		.from("recur")
+		.then((rec) => {
+			for (var i = 0; i < rec.length; i++) {
+				arr.push(rec[i]);
+			}
+			mainWindow.webContents.on("did-finish-load", () => {
+				mainWindow.webContents.send("item:recur", arr);
+			});
+		})
+		.catch(function (error) {
+			console.error(error);
+		});
 }
 
 let switchWindow = new whichWindow();
@@ -185,6 +204,7 @@ app.on("ready", function () {
 
 	// send data to mainWindow from here
 	updateTasks(taskContents);
+	updateRecur();
 	groupExpenses();
 
 	//Quit app when closed
@@ -220,7 +240,7 @@ function createAddTask() {
 	//create new window
 	addTask = new BrowserWindow({
 		width: 500,
-		height: 700,
+		height: 400, // earlier with points 700
 		title: "Add Task",
 		slashes: true,
 		webPreferences: { nodeIntegration: true },
@@ -248,7 +268,7 @@ ipcMain.on("change:exp:0-&&-level:+1", function (e, item) {
 //catch all values from item:values =============================================================
 
 ipcMain.on("item:values", function (e, item) {
-	var insert1 = { task: item[0], points: item[1], time: item[2] };
+	var insert1 = { task: item[0], time: item[1] }; // points: item[1],
 	addTask.close();
 	knex
 		.insert(insert1)
@@ -273,10 +293,25 @@ ipcMain.on("item:toDelete", function (e, item) {
 			allJsonChanges.changesToExperience();
 			switchWindow.showTasks();
 		});
-	knex("sqlite_sequence").where("name", "task").update({ seq: 0 }).then();
 });
 
 // end collection of toDelete ===================================================================
+
+// catch item:toDeleteList to delete from recur
+
+ipcMain.on("item:toDeleteList", function (e, item) {
+	knex("recur")
+		.where("value", item)
+		.del()
+		.then(() => {
+			updateRecur();
+			allJsonChanges.changesToExperience();
+			switchWindow.showExpenses();
+		});
+	knex("sqlite_sequence").where("name", "task").update({ seq: 0 }).then();
+});
+
+// end catch item:toDeleteList
 
 function createAddExpense() {
 	addExpense = new BrowserWindow({
@@ -454,6 +489,45 @@ function groupExpenses() {
 		});
 }
 
+// Recurring expenses
+function createAddRepeat() {
+	addRepeat = new BrowserWindow({
+		title: "Add Recurring Expenses",
+		slashes: true,
+		webPreferences: { nodeIntegration: true },
+		height: 400,
+		width: 600,
+	});
+	addRepeat.loadURL(
+		url.format({
+			pathname: path.join(__dirname, "templates/addRepeat.html"),
+			protocol: "file:",
+			slashes: true,
+		})
+	);
+	// Garbage collection
+	addRepeat.on("close", function () {
+		addBudget = null;
+	});
+	addRepeat.setMenuBarVisibility(false);
+}
+
+ipcMain.on("item:recur", function (e, item) {
+	addRepeat.close();
+	var insert1 = { value: item[0], time: item[1] };
+	let cols = ["value", "time"];
+	knex
+		.insert(insert1)
+		.into("recur")
+		.then(function (id) {
+			updateRecur();
+			switchWindow.showExpenses();
+		})
+		.catch(function (error) {
+			console.error(error);
+		});
+});
+
 // Create Menu Template
 
 const mainMenuTemplate = [
@@ -511,6 +585,13 @@ const mainMenuTemplate = [
 					createAddBudget();
 				},
 				accelerator: process.platform == "darwin" ? "command+B" : "Ctrl+B",
+			},
+			{
+				label: "Add Recurring",
+				click() {
+					createAddRepeat();
+				},
+				accelerator: process.platform == "darwin" ? "command+P" : "Ctrl+P",
 			},
 		],
 	},

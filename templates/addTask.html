@@ -50,7 +50,7 @@
 					style="margin-bottom: 5vh"
 				/>
 
-				<label for="points">Assign Yourself Some Points on Completion</label>
+				<!-- <label for="points">Assign Yourself Some Points on Completion</label>
 
 				<p class="range-field">
 					<input
@@ -65,7 +65,7 @@
 						<span style="color: wheat">Points For this Task: </span>
 						<output id="num" class="slider-number">3</output>
 					</center>
-				</p>
+				</p> -->
 				<label for="taskCompleteTime">Time to Complete Your Task</label>
 
 				<p>
@@ -81,11 +81,13 @@
 					</label>
 				</p>
 				<br />
-				<input
-					type="submit"
-					class="btn waves-effect waves-light"
-					id="submitbtn"
-				/>
+				<center>
+					<input
+						type="submit"
+						class="btn waves-effect waves-light"
+						id="submitbtn"
+					/>
+				</center>
 			</form>
 		</div>
 
@@ -99,7 +101,7 @@
 			function submitForm(e) {
 				e.preventDefault();
 				const task = document.querySelector("#taskInput").value;
-				const point = document.querySelector("#num").value;
+				// const point = document.querySelector("#num").value; // used to send this along with allValues
 				var timesp = "";
 
 				if (document.getElementById("t").checked) {
@@ -108,7 +110,7 @@
 					timesp = document.getElementById("tw").value;
 				}
 
-				let allValues = [task, point, timesp];
+				let allValues = [task, timesp];
 				ipcRenderer.send("item:values", allValues);
 			}
 		</script>

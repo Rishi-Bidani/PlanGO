@@ -1,12 +1,12 @@
 {
   "budget": 0,
-  "expenditure": 10,
+  "expenditure": 15,
   "food": 10,
   "education": null,
-  "commute": null,
+  "commute": 5,
   "phonebill": null,
   "otherbills": null,
   "miscellaneous": null,
-  "experience": 5.5,
-  "level": 5
+  "experience": 8.799999999999999,
+  "level": 8
 }

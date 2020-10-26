@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+		/>
+		<title>Add Recurring Expenses</title>
+		<style>
+			body {
+				background-color: #476d7c;
+				font-family: "Helvetica";
+			}
+			h2 {
+				margin-top: 10px;
+			}
+			label {
+				font-size: medium;
+			}
+			nav {
+				background-color: #254b62;
+			}
+			input[type="text"] {
+				color: white;
+				font-family: Helvetica;
+			}
+			span {
+				color: rgb(231, 229, 229);
+				font-family: Helvetica;
+			}
+		</style>
+	</head>
+	<body>
+		<nav>
+			<div class="nav-wrapper">
+				<h2 class="brand-logo center">Recurring Expenses</h2>
+			</div>
+		</nav>
+		<br />
+		<div class="container">
+			<form>
+				<label for="RepeatInput">Payment description</label>
+				<input
+					id="RepeatInput"
+					type="text"
+					placeholder="Recurring Payment"
+					style="margin-bottom: 5vh"
+				/>
+				<label for="repeatTime">When does it Recur</label>
+
+				<p>
+					<label style="color: black">
+						<input
+							name="timespan"
+							type="radio"
+							id="m"
+							value="monthly"
+							checked
+						/>
+						<span>Monthly</span>
+					</label>
+				</p>
+				<p>
+					<label style="color: black">
+						<input name="timespan" type="radio" id="a" value="annual" />
+						<span>Annual</span>
+					</label>
+				</p>
+				<center>
+					<input
+						type="submit"
+						class="btn waves-effect waves-light"
+						id="submitbtn"
+					/>
+				</center>
+			</form>
+		</div>
+
+		<script>
+			const electron = require("electron");
+			const { ipcRenderer } = electron;
+
+			const form = document.querySelector("form");
+			form.addEventListener("submit", submitForm);
+
+			function submitForm(e) {
+				e.preventDefault();
+				const recur = document.querySelector("#RepeatInput").value;
+				var timesp = "";
+
+				if (document.getElementById("m").checked) {
+					timesp = document.getElementById("m").value;
+				} else {
+					timesp = document.getElementById("a").value;
+				}
+
+				let allValues = [recur, timesp];
+				ipcRenderer.send("item:recur", allValues);
+			}
+		</script>
+	</body>
+</html>
