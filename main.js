@@ -7,6 +7,7 @@ const { app, BrowserWindow, ipcMain, webContents } = electron;
 const fs = require("fs");
 
 jsonData = require("./budget.json");
+jsonDefine = require("./define.json");
 
 let mainWindow;
 let addTask;
@@ -115,6 +116,7 @@ class jsonUpdates {
 		this.mainFile.level = this.level;
 		let data = JSON.stringify(this.mainFile, null, 2);
 		fs.writeFileSync("budget.json", data);
+		mainWindow.reload();
 	}
 	reset() {
 		this.budget = 0;
@@ -147,6 +149,29 @@ class jsonUpdates {
 			.then(() => {});
 	}
 }
+
+class jsonDefines {
+	constructor() {
+		this.term = jsonDefine.terms;
+		this.define = jsonDefine.define;
+
+		this.defineFile = {
+			terms: this.term,
+			define: this.define,
+		};
+	}
+	changes(t, d) {
+		this.term = t;
+		this.define = d;
+		this.defineFile.terms = this.term;
+		this.defineFile.define = this.define;
+		let data = JSON.stringify(this.defineFile);
+		fs.writeFileSync("define.json", data);
+		mainWindow.reload();
+	}
+}
+
+defineJsonChanges = new jsonDefines();
 allJsonChanges = new jsonUpdates();
 
 class whichWindow {
@@ -160,6 +185,12 @@ class whichWindow {
 		mainWindow.reload();
 		mainWindow.webContents.on("did-finish-load", () => {
 			mainWindow.webContents.send("whichWindow", "expenses");
+		});
+	}
+	showDefine() {
+		mainWindow.reload();
+		mainWindow.webContents.on("did-finish-load", () => {
+			mainWindow.webContents.send("whichWindow", "define");
 		});
 	}
 }
@@ -527,6 +558,55 @@ ipcMain.on("item:recur", function (e, item) {
 			console.error(error);
 		});
 });
+
+// Dinitions
+
+function currentdefinitions(t, d) {
+	let ter = jsonDefine.terms;
+	let def = jsonDefine.define;
+
+	let currentDict = {};
+
+	for (let i = 0; i < t.length; i++) {
+		ter.push(t[i]);
+		def.push(d[i]);
+	}
+	currentDict["terms"] = ter;
+	currentDict["define"] = def;
+	return currentDict;
+}
+
+ipcMain.on("dict:definitions", function (e, item) {
+	let terms = item.term;
+	let definitions = item.define;
+	console.log(terms);
+	console.log(definitions);
+
+	let currentDict = currentdefinitions(terms, definitions);
+	defineJsonChanges.changes(currentDict.terms, currentDict.define);
+	switchWindow.showDefine();
+});
+
+function deleteTableRow(ind) {
+	let terms = jsonDefine.terms;
+	let definitions = jsonDefine.define;
+
+	terms.splice(ind, 1);
+	definitions.splice(ind, 1);
+
+	newDict = {};
+	newDict["terms"] = terms;
+	newDict["define"] = definitions;
+	return newDict;
+}
+
+ipcMain.on("whichRowToDelete", function (e, item) {
+	let currentDict = deleteTableRow(item);
+	defineJsonChanges.changes(currentDict.terms, currentDict.define);
+	switchWindow.showDefine();
+});
+
+// end definitions
 
 // Create Menu Template
 

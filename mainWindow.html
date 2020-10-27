@@ -91,29 +91,42 @@
 				border: white;
 				margin-top: 200px;
 			}
-			td{
-				padding-right: 40px;
-			}
-			h1{
-				font-size: 5vh;
-			}
-			h2{
-				font-size: 3.5vh;
-			}
-			h3{
-				font-size: 3vh;
-			}
-			h4{
-				font-size: 2.5vh;
-			}
+			td{	padding-right: 40px; }
+
+			h1{ font-size: 5vh;	}
+
+			h2{	font-size: 3.5vh; }
+
+			h3{ font-size: 3vh; }
+
+			h4{ font-size: 2.5vh; }
+
 			svg > g > g:last-child { pointer-events: none }
+
+			::-webkit-scrollbar {
+				display: none;
+			}
+
+			.table-def{
+				max-width: 70vw;
+				width: 100%;
+				margin-top: 5vh;
+				overflow-y: scroll;
+				overflow-x: hidden;
+				table-layout: fixed;
+			}
+			.term{word-wrap:break-word;}
+
+			.links-container{
+				max-height: 60vh;
+			}
 		</style>
 	</head>
 	<body>
 		<div class="sidebar">
 			<a href="#home" class="nava" id="homebtn" onclick="showhome()">Home</a>
 			<a href="#tasks" class="nava" id="taskbtn" onclick="showtasks()">Tasks</a>
-			<a href="#contact" class="nava">TimeTable</a>
+			<a href="#contact" id="linksbtn" class="nava" onclick="showLinks()">Definitions</a>
 			<a href="#about" class="nava">Quick notes</a>
 			<a href="#about" class="nava" id="expensesbtn" onclick="showExpenses()"
 				>Expenses
@@ -256,17 +269,38 @@
 		</div>
 		</div>
 
+		<!-- Definitions view -->
+		<div id="links" class="screen centertitle" style="display: none; margin-right: 100px">
+			<div class="container links-conatiner">
+				<table class="table-dark table-striped table-def" id="myDefinitions">
+					<thead>
+						<th style="width: 30%; padding-left: 3vw;">Term</th>
+						<th style="width: 70%;">Define</th>
+						<td></td>
+					</thead>
+					<tbody id="defbody">
+
+					</tbody>
+				</table>
+				<button onclick="addRow" id="ar" class="btn btn-primary">Add Row</button>
+				<button onclick="submitLinks" id="sb" class="btn btn-primary">Submit</button>
+			</div>
+		</div>
+
 		<script>
 			const path = require("path");
 			const electron = require("electron");
 			const { ipcRenderer } = electron;
 			const fs = require('fs');
 			var jsonData = require('./budget.json');
+			var jsonDefine = require("./define.json");
+
 			// Screens bellow ------------------------------------------
 			let allscreens = document.getElementsByClassName("screen");
 			let task = document.getElementById("tasks");
 			let home = document.getElementById("home");
 			let main = document.getElementById("main");
+			let links = document.getElementById("links");
 
 			// Title ----------------------------------------------------
 			let title = document.getElementById("title");
@@ -275,6 +309,7 @@
 			let taskbtn = document.getElementById("taskbtn");
 			let homebtn = document.getElementById("homebtn");
 			let expensesbtn = document.getElementById("expensesbtn");
+			let linksbtn = document.getElementById("linksbtn");
 
 
 			// level stuff
@@ -292,7 +327,7 @@
 
 			level();
 
-			nav = [taskbtn, homebtn, expensesbtn];
+			nav = [taskbtn, homebtn, linksbtn, expensesbtn];
 
 			function showtasks() {
 				for (var i = 0; i < allscreens.length; i++) {
@@ -354,6 +389,53 @@
 				miscValue.innerHTML = jsonData.miscellaneous == null ? 0 : jsonData.miscellaneous;
 			}
 		
+			function showLinks(){
+				for (var i = 0; i < allscreens.length; i++) {
+					allscreens[i].style.display = "none";
+				}
+				for (var i = 0; i < nav.length; i++) {
+					nav[i].className = "";
+				}
+
+				title.innerHTML = "Definitions";
+				links.style.display = "block";
+				linksbtn.className = "active";
+
+				const tb = document.getElementById("defbody")
+				tb.innerHTML = "";
+				for(let i=0; i<jsonDefine.terms.length; i++) {
+					const tr = document.createElement("tr");
+					const td1 = document.createElement("td");
+					const td2 = document.createElement("td");
+					const td3 = document.createElement("td");
+
+					td1.className = "term";
+					td1.style.paddingLeft = "5%";
+					td2.className = "term";
+
+					const tableItem1 = document.createTextNode(jsonDefine.terms[i]);
+					const tableItem2 = document.createTextNode(jsonDefine.define[i]);
+					const tableItem3 = document.createElement("button");
+					tableItem3.innerHTML = "Delete";
+					tableItem3.className = "btn btn-danger";
+					tableItem3.setAttribute("name", `${i}`);
+					// tableItem3.onclick = deleteRow.bind(null, this.value);
+
+					td1.appendChild(tableItem1);
+					td2.appendChild(tableItem2);
+					td3.appendChild(tableItem3);
+					tr.appendChild(td1);
+					tr.appendChild(td2);
+					tr.appendChild(td3)
+					tb.appendChild(tr)
+					tableItem3.addEventListener("click", () => deleteRow(tableItem3.name));
+				}
+
+			}
+			function deleteRow(e) {
+				ipcRenderer.send("whichRowToDelete", e);
+			}
+
 			ipcRenderer.on("item:task", function (e, item) {
 				const ul1 = document.getElementById("t");
 				const ul2 = document.getElementById("tw");
@@ -399,8 +481,8 @@
 				e.target.remove();
 				if (ul.children.length == 0) {
 					ul.className = "";
-					level();
 				}
+				level();
 				ipcRenderer.send("item:toDelete", e.target.innerHTML);
 			}
 
@@ -409,10 +491,61 @@
 					showtasks();
 				}else if(item == "expenses"){
 					showExpenses();
-				}else{
+				}else if(item == "define"){
+					showLinks();
+				}
+				else{
 					showhome();
 				}
 			})	
+
+			// Quick Links
+
+
+			function addRow() {
+				let defTable = document.getElementById("myDefinitions");
+				let defRows = document.getElementById("myDefinitions").rows.length;
+
+				// add row
+				let row = defTable.insertRow(defRows);
+
+				// cloumn 1
+				let cell1 = row.insertCell(0);
+				let inputItem1 = document.createElement("input");
+				inputItem1.style.width = `${80}%`;
+				inputItem1.setAttribute("name", "addterm[]");
+				cell1.appendChild(inputItem1);
+
+				// column 2
+				let cell2 = row.insertCell(1);
+				let inputItem2 = document.createElement("input");
+				inputItem2.style.width = `${80}%`;
+				inputItem2.setAttribute("name", "adddesc[]");
+				cell2.appendChild(inputItem2);
+
+			}
+
+			function submitLinks(){
+				let allTerms = document.getElementsByName("addterm[]");
+				let allDefine = document.getElementsByName("adddesc[]");
+				let termsList = [];
+				let defineList = [];
+
+				let allDict = {};
+
+				for(let i=0; i<allTerms.length; i++){
+					termsList.push(allTerms[i].value);
+					defineList.push(allDefine[i].value);
+				}
+				allDict["term"] = termsList;
+				allDict["define"] = defineList;
+
+				console.log(allDict);
+
+				ipcRenderer.send("dict:definitions", allDict);
+			}
+			document.getElementById("sb").onclick = submitLinks;
+			document.getElementById("ar").onclick = addRow;
 
 			// Google Charts
 
