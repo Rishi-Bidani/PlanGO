@@ -316,6 +316,7 @@ ipcMain.on("item:values", function (e, item) {
 
 //catch item:toDelete to delete =================================================================
 ipcMain.on("item:toDelete", function (e, item) {
+	console.log(item);
 	knex("task")
 		.where("task", item)
 		.del()

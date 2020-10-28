@@ -455,12 +455,27 @@
 						ult = document.getElementById("tw");
 					}
 					const li = document.createElement("li");
+
+					const textspan = document.createElement("span");
+
 					ult.className = "collection";
 					li.className = "collection-item";
+					li.style.listStyleType = "none";
+					li.marginTop = `${2}%`;
 
 					const itemText = document.createTextNode(item[i].task);
 
-					li.appendChild(itemText);
+					const bullspan = document.createElement("span");
+					bullspan.style.cursor = "pointer";
+					bullspan.addEventListener("click", removeItem1);
+
+					bullspan.style.marginRight = `${2}%`;
+					bullspan.innerHTML = "X";
+
+					textspan.appendChild(itemText);
+
+					li.appendChild(bullspan);
+					li.appendChild(textspan);
 					ult.appendChild(li);
 				}
 			});
@@ -472,18 +487,19 @@
 
 			const li = document.createElement("li");
 
-			ul1.addEventListener("dblclick", removeItem1);
+			// ul1.addEventListener("dblclick", removeItem1);
 			ul2.addEventListener("dblclick", removeItem1);
 
+
 			function removeItem1(e) {
-				// var myVal = e.target.innerHTML;
-				// console.log(myVal);
-				e.target.remove();
+				e.target.parentElement.remove();
 				if (ul.children.length == 0) {
 					ul.className = "";
 				}
 				level();
-				ipcRenderer.send("item:toDelete", e.target.innerHTML);
+				let etarget = e.target.parentElement.innerText;
+				// console.log(etarget.substring(1));
+				ipcRenderer.send("item:toDelete", etarget.substring(1));
 			}
 
 			ipcRenderer.on("whichWindow", function(e, item){
@@ -596,7 +612,7 @@
 
 			document.getElementById("refresh").onclick = restart;
 
-			showhome();
+			showExpenses();
 
 			function reset(){
 				ipcRenderer.send("resetAll", "reset")
@@ -648,10 +664,6 @@
 
 			document.getElementById("reset").onclick = reset;
 		</script>
-
-		<div class="centertitle screen" id="main">
-			<h1>This</h1>
-		</div>
 	</body>
 </html>
 

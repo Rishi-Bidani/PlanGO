@@ -9,7 +9,7 @@
 	grid-column: 1;
 	height: 70vh;
 	word-wrap: break-word;
-	padding-left: 30px;
+	padding-left: 0px;
 	padding-right: 30px;
 	padding-top: 20px;
 	text-align: left;
@@ -19,7 +19,7 @@
 	height: 70vh;
 	overflow-y: scroll;
 	overflow-x: hidden;
-	padding-left: 30px;
+	padding-left: 0px;
 	padding-right: 30px;
 	padding-top: 20px;
 	text-align: left;
