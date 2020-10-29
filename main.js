@@ -227,6 +227,7 @@ app.on("ready", function () {
 		width: 1100,
 		webPreferences: { nodeIntegration: true },
 		show: false,
+		icon: "assets/icons/png/icon.png",
 	});
 	mainWindow.maximize();
 	mainWindow.loadURL(
