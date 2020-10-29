@@ -53,7 +53,7 @@
 					</thead>
 					<tbody>
 						<tr>
-							<td><input type="number" name="amt[]" /></td>
+							<td><input type="number" min="0" name="amt[]" /></td>
 							<td><input type="date" name="date[]" /></td>
 							<td>
 								<select name="group[]">
@@ -99,6 +99,7 @@
 				var inputItem1 = document.createElement("input");
 				inputItem1.setAttribute("type", "number");
 				inputItem1.setAttribute("name", "amt[]");
+				inputItem1.setAttribute("min", "0");
 				cell1.appendChild(inputItem1);
 
 				//column 2

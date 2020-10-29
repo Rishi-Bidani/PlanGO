@@ -68,37 +68,37 @@ class jsonUpdates {
 		fs.writeFileSync("budget.json", data);
 	}
 	changesToFood(foo) {
-		this.food = foo;
+		this.food = foo == null ? 0 : foo;
 		this.mainFile.food = this.food;
 		let data = JSON.stringify(this.mainFile, null, 2);
 		fs.writeFileSync("budget.json", data);
 	}
 	changesToEducation(edu) {
-		this.education = edu;
+		this.education = edu == null ? 0 : edu;
 		this.mainFile.education = this.education;
 		let data = JSON.stringify(this.mainFile, null, 2);
 		fs.writeFileSync("budget.json", data);
 	}
 	changesToCommute(com) {
-		this.commute = com;
+		this.commute = com == null ? 0 : com;
 		this.mainFile.commute = this.commute;
 		let data = JSON.stringify(this.mainFile, null, 2);
 		fs.writeFileSync("budget.json", data);
 	}
 	changesToPhonebill(pho) {
-		this.phonebill = pho;
+		this.phonebill = pho == null ? 0 : pho;
 		this.mainFile.phonebill = this.phonebill;
 		let data = JSON.stringify(this.mainFile, null, 2);
 		fs.writeFileSync("budget.json", data);
 	}
 	changesToOtherbills(ob) {
-		this.otherbills = ob;
+		this.otherbills = ob == null ? 0 : ob;
 		this.mainFile.otherbills = this.otherbills;
 		let data = JSON.stringify(this.mainFile, null, 2);
 		fs.writeFileSync("budget.json", data);
 	}
 	changesToMiscellaneous(misc) {
-		this.miscellaneous = misc;
+		this.miscellaneous = misc == null ? 0 : misc;
 		this.mainFile.miscellaneous = this.miscellaneous;
 		let data = JSON.stringify(this.mainFile, null, 2);
 		fs.writeFileSync("budget.json", data);
@@ -610,6 +610,42 @@ ipcMain.on("whichRowToDelete", function (e, item) {
 
 // end definitions
 
+function generateCSV() {
+	let tempData = [];
+	var data = [];
+	// ["S.No", "Amount", "Date", "Group"]
+	knex
+		.select("amount", "date", "group")
+		.from("expense")
+		.then((csv) => {
+			for (let i = 0; i < csv.length; i++) {
+				tempData.push(csv[i]);
+			}
+			for (let i = 0; i < tempData.length; i++) {
+				// console.log(tempData[i].amount);`
+				arr = [i + 1, tempData[i].amount, tempData[i].date, tempData[i].group];
+				data.push(arr);
+			}
+
+			function download_csv() {
+				var csv2 = "S.No, Amount, Date, Group\n";
+				data.forEach(function (row) {
+					csv2 += row.join(",");
+					csv2 += "\n";
+				});
+				return csv2;
+			}
+			let csv3 = download_csv();
+			console.log(csv3);
+			fs.writeFileSync("expenses.csv", csv3);
+		})
+		.catch(function (error) {
+			console.error(error);
+		});
+}
+ipcMain.on("download", (e, item) => {
+	generateCSV();
+});
 // Create Menu Template
 
 const mainMenuTemplate = [

@@ -5,6 +5,9 @@
 
 		<link rel="stylesheet" href="static/sidenav.css" />
 
+		<!-- font awesome -->
+		<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/solid.min.css"/> -->
+		<script src="https://kit.fontawesome.com/7417cdadd3.js" crossorigin="anonymous"></script>
 		<link
 			rel="stylesheet"
 			href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -234,7 +237,10 @@
 				</div>
 				<div id="piechart" class="alignpie" style="z-index: -40;"></div>
 			</div>
-		
+				
+		<div id="Ecolumn4">
+			<button type="button" class="btn btn-primary download" id="downloadcsv">Download CSV</button>
+		</div>
 			<div id="Ecolumn2" style="z-index: 10;">
 				<p>
 					<h3>Your Budget:</h3>
@@ -393,6 +399,13 @@
 				obValue.innerHTML = jsonData.otherbills == null ? 0 : jsonData.otherbills;
 				miscValue.innerHTML = jsonData.miscellaneous == null ? 0 : jsonData.miscellaneous;
 			}
+
+			document.getElementById("downloadcsv").onclick = senddownload;
+
+			function senddownload(){
+				ipcRenderer.send("download", "download")
+			}
+
 		
 			function showLinks(){
 				for (var i = 0; i < allscreens.length; i++) {
@@ -421,7 +434,11 @@
 					const tableItem1 = document.createTextNode(jsonDefine.terms[i]);
 					const tableItem2 = document.createTextNode(jsonDefine.define[i]);
 					const tableItem3 = document.createElement("button");
-					tableItem3.innerHTML = "Delete";
+					// tableItem3.innerHTML = "Delete";
+					// tableItem3.innerHTML = <i class="far fa-trash-alt"></i>;
+					const deleteIcon = document.createElement("i");
+					deleteIcon.classList.add("far", "fa-trash-alt");
+					tableItem3.append(deleteIcon)
 					tableItem3.className = "btn btn-danger";
 					tableItem3.setAttribute("name", `${i}`);
 					// tableItem3.onclick = deleteRow.bind(null, this.value);
@@ -572,12 +589,23 @@
 			google.charts.setOnLoadCallback(drawChart);
 
 			function drawChart() {
-				f = jsonData.food == null ? 0.1 : jsonData.food;
-				e = jsonData.education == null ? 0.1 : jsonData.education;
-				c = jsonData.commute == null ? 0.1 : jsonData.commute;
-				p = jsonData.phonebill == null ? 0.1 : jsonData.phonebill;
-				o = jsonData.otherbills == null ? 0.1 : jsonData.otherbills;
-				m = jsonData.miscellaneous == null ? 0.1 : jsonData.miscellaneous;
+				let budvalues = jsonData.food + 
+								jsonData.education + 
+								jsonData.commute + 
+								jsonData.phonebill + 
+								jsonData.otherbills + 
+								jsonData.miscellaneous;
+				
+				if(budvalues == 0){
+					f = 0.1, e = 0.1, c=0.1, p=0.1, o=0.1, m=0.1
+				}else{				
+				f = jsonData.food;
+				e = jsonData.education;
+				c = jsonData.commute;
+				p = jsonData.phonebill;
+				o = jsonData.otherbills;
+				m = jsonData.miscellaneous;
+				}
 				var data = google.visualization.arrayToDataTable([
 					["Task", "Hours per Day"],
 					["Food", f],
@@ -686,5 +714,3 @@
 		</script>
 	</body>
 </html>
-
-
