@@ -1,6 +1,22 @@
 # PlanGO
-This is a self motivation app for students to keep track of various everyday tasks.
-Details will be revealed after development
+### Requirement to setup the app
+* node.js
+
+### Setup
+1. Download or clone this repository
+1. Run the following commands in node.js or git bash
+```
+npm i
+npm start
+```
+#
+If you are a student and like to stay organised, this app will definitely help you plan and keep track of your requirements
+
+
+
+
+
+
 
 
 
