@@ -12,6 +12,9 @@ body {
 	height: 100vh;
 	top: 0px;
 	z-index: 10;
+	display: grid;
+	grid-template-rows: repeat(5, 10vh);
+	align-content: center;
 }
 
 .sidebar a {
@@ -37,6 +40,15 @@ body {
 
 div.content {
 	margin-left: 200px;
-	/* padding: 1px 16px; */
 	height: 1000px;
+}
+#expensesbtn {
+	grid-row: 1;
+	/* height: 10vh; */
+}
+#taskbtn {
+	grid-row: 2;
+}
+#linksbtn {
+	grid-row: 3;
 }

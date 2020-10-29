@@ -14,6 +14,10 @@ let addTask;
 
 taskContents = [];
 
+//SET ENV
+
+// process.env.NODE_ENV = "production";
+
 //knex
 var knex = require("knex")({
 	client: "sqlite3",
@@ -316,7 +320,6 @@ ipcMain.on("item:values", function (e, item) {
 
 //catch item:toDelete to delete =================================================================
 ipcMain.on("item:toDelete", function (e, item) {
-	console.log(item);
 	knex("task")
 		.where("task", item)
 		.del()
@@ -372,7 +375,7 @@ ipcMain.on("item:expenses", function (e, item) {
 	let amount = item.amount;
 	let date = item.date;
 	let group = item.group;
-	console.log(item);
+	// console.log(item);
 	addExpense.close();
 	for (let i = 0; i < amount.length; i++) {
 		var insertExpenses = { amount: amount[i], date: date[i], group: group[i] };
@@ -382,7 +385,7 @@ ipcMain.on("item:expenses", function (e, item) {
 			.insert(insertExpenses)
 			.into("expense")
 			.then(() => {
-				console.log("done");
+				// console.log("done");
 			})
 			.catch(function (error) {
 				console.error(error);
@@ -426,7 +429,7 @@ ipcMain.on("item:budget", function (e, item) {
 
 ipcMain.on("restart:budget", function (e, item) {
 	// groupExpenses();
-	mainWindow.reload();
+	// mainWindow.reload();
 	switchWindow.showExpenses();
 });
 
@@ -580,8 +583,6 @@ function currentdefinitions(t, d) {
 ipcMain.on("dict:definitions", function (e, item) {
 	let terms = item.term;
 	let definitions = item.define;
-	console.log(terms);
-	console.log(definitions);
 
 	let currentDict = currentdefinitions(terms, definitions);
 	defineJsonChanges.changes(currentDict.terms, currentDict.define);
@@ -621,12 +622,6 @@ const mainMenuTemplate = [
 					require("electron").shell.openExternal(
 						"https://github.com/Rishi-Bidani/PlanGO"
 					);
-				},
-			},
-			{
-				label: "Clear Items",
-				click() {
-					mainWindow.webContents.send("item:clear");
 				},
 			},
 			{

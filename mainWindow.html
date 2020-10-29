@@ -118,19 +118,26 @@
 			.term{word-wrap:break-word;}
 
 			.links-container{
-				max-height: 60vh;
+				max-height: 20vh;
+				height: 20vh;
+				overflow-y: scroll;
+			}
+			#defhead th{
+				padding-top: 15px;
+				padding-bottom: 15px;
 			}
 		</style>
 	</head>
 	<body>
 		<div class="sidebar">
-			<a href="#home" class="nava" id="homebtn" onclick="showhome()">Home</a>
+			<!-- <a href="#home" class="nava" id="homebtn" onclick="showhome()">Home</a> -->
+			<a href="#about" class="nava" id="expensesbtn" onclick="showExpenses()"
+			>Expenses
+			</a>
 			<a href="#tasks" class="nava" id="taskbtn" onclick="showtasks()">Tasks</a>
 			<a href="#contact" id="linksbtn" class="nava" onclick="showLinks()">Definitions</a>
-			<a href="#about" class="nava">Quick notes</a>
-			<a href="#about" class="nava" id="expensesbtn" onclick="showExpenses()"
-				>Expenses
-			</a>
+			<!-- <a href="#about" class="nava">Quick notes</a> -->
+
 		</div>
 
 		<div id="levelgrid">
@@ -273,18 +280,17 @@
 		<div id="links" class="screen centertitle" style="display: none; margin-right: 100px">
 			<div class="container links-conatiner">
 				<table class="table-dark table-striped table-def" id="myDefinitions">
-					<thead>
-						<th style="width: 30%; padding-left: 3vw;">Term</th>
-						<th style="width: 70%;">Define</th>
-						<td></td>
+					<thead id="defhead">
+						<th style="width: 30%; padding-left: 3vw;"><h3>Term</h3></th>
+						<th style="width: 70%;"><h3>Define</h3></th>
 					</thead>
 					<tbody id="defbody">
 
 					</tbody>
 				</table>
-				<button onclick="addRow" id="ar" class="btn btn-primary">Add Row</button>
-				<button onclick="submitLinks" id="sb" class="btn btn-primary">Submit</button>
 			</div>
+			<button onclick="addRow" id="ar" class="btn btn-primary">Add Row</button>
+			<button onclick="submitLinks" id="sb" class="btn btn-primary">Submit</button>
 		</div>
 
 		<script>
@@ -298,7 +304,7 @@
 			// Screens bellow ------------------------------------------
 			let allscreens = document.getElementsByClassName("screen");
 			let task = document.getElementById("tasks");
-			let home = document.getElementById("home");
+			// let home = document.getElementById("home");
 			let main = document.getElementById("main");
 			let links = document.getElementById("links");
 
@@ -307,7 +313,7 @@
 
 			// Buttons bellow --------------------------------------------
 			let taskbtn = document.getElementById("taskbtn");
-			let homebtn = document.getElementById("homebtn");
+			// let homebtn = document.getElementById("homebtn");
 			let expensesbtn = document.getElementById("expensesbtn");
 			let linksbtn = document.getElementById("linksbtn");
 
@@ -327,7 +333,7 @@
 
 			level();
 
-			nav = [taskbtn, homebtn, linksbtn, expensesbtn];
+			nav = [taskbtn, linksbtn, expensesbtn];
 
 			function showtasks() {
 				for (var i = 0; i < allscreens.length; i++) {
@@ -367,12 +373,11 @@
 				expensesbtn.className = "active";
 
 				var jsonData = require('./budget.json');
-				console.log(jsonData)
 				var budget = document.getElementById("monthlybudget");
 				let expen = document.getElementById("monthexpen");
 
 				budget.innerHTML = jsonData.budget;
-				expen.innerHTML = jsonData.expenditure;
+				expen.innerHTML = jsonData.expenditure == null? 0 : jsonData.expenditure;
 
 				
 				var foodValue = document.getElementById("foodValue")
@@ -556,8 +561,6 @@
 				allDict["term"] = termsList;
 				allDict["define"] = defineList;
 
-				console.log(allDict);
-
 				ipcRenderer.send("dict:definitions", allDict);
 			}
 			document.getElementById("sb").onclick = submitLinks;
@@ -569,12 +572,12 @@
 			google.charts.setOnLoadCallback(drawChart);
 
 			function drawChart() {
-				f = jsonData.food == 0 ? 0.1 : jsonData.food;
-				e = jsonData.education == 0 ? 0.1 : jsonData.education;
-				c = jsonData.commute == 0 ? 0.1 : jsonData.commute;
-				p = jsonData.phonebill == 0 ? 0.1 : jsonData.phonebill;
-				o = jsonData.otherbills == 0 ? 0.1 : jsonData.otherbills;
-				m = jsonData.miscellaneous == 0 ? 0.1 : jsonData.miscellaneous;
+				f = jsonData.food == null ? 0.1 : jsonData.food;
+				e = jsonData.education == null ? 0.1 : jsonData.education;
+				c = jsonData.commute == null ? 0.1 : jsonData.commute;
+				p = jsonData.phonebill == null ? 0.1 : jsonData.phonebill;
+				o = jsonData.otherbills == null ? 0.1 : jsonData.otherbills;
+				m = jsonData.miscellaneous == null ? 0.1 : jsonData.miscellaneous;
 				var data = google.visualization.arrayToDataTable([
 					["Task", "Hours per Day"],
 					["Food", f],
@@ -636,13 +639,28 @@
 					} else {
 						ull = document.getElementById("annualList");
 					}
+
+					const textspan1 = document.createElement("span");
+
 					const li = document.createElement("li");
 					ull.className = "collection";
 					li.className = "collection-item";
+					li.style.listStyleType = "none";
 
 					const itemText = document.createTextNode(item[i].value);
 
-					li.appendChild(itemText);
+
+					const bullspan1 = document.createElement("span");
+					bullspan1.style.cursor = "pointer";
+					bullspan1.addEventListener("click", removeItem);
+
+					bullspan1.style.marginRight = `${2}%`;
+					bullspan1.innerHTML = "X";
+
+					textspan1.appendChild(itemText);
+
+					li.appendChild(bullspan1);
+					li.appendChild(textspan1);
 					ull.appendChild(li);
 				}
 			});
@@ -655,11 +673,13 @@
 			ml.addEventListener("dblclick", removeItem);
 
 			function removeItem(e) {
-				e.target.remove();
+				// e.target.remove();
+				e.target.parentElement.remove();
 				if (ul.children.length == 0) {
 					ul.className = "";
 				}
-				ipcRenderer.send("item:toDeleteList", e.target.innerHTML);
+				let etarget = e.target.parentElement.innerText;
+				ipcRenderer.send("item:toDeleteList", etarget.substring(1));
 			}
 
 			document.getElementById("reset").onclick = reset;
