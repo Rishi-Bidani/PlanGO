@@ -26,6 +26,7 @@ If you are a student and like to stay organised, this app will definitely help y
     
     ![Pie Chart Image](https://github.com/Rishi-Bidani/PlanGO/blob/withMedia/media/PieChartScreenShot.png)
     1. Download your expenses in CSV format to view in an excel sheet.
+        > A separate file is created in the root folder
     1. Add Recurring payments such as Rent or Loans under the monthly and annual payment tabs
     ![Expense Manager](https://github.com/Rishi-Bidani/PlanGO/blob/withMedia/media/ExpensesScreenShot.png)
     
@@ -37,3 +38,4 @@ If you are a student and like to stay organised, this app will definitely help y
 *Current plans likely to change
 
 1. Full Notes sections - create notebooks
+1. Calendar to mark your important events
