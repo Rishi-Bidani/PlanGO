@@ -1,4 +1,6 @@
 # PlanGO
+Developed for TechWithTim Code Jam - For Students
+#
 ### Requirement to setup the app
 * node.js
 * Although cross-platform, it has been developed and tested on __Windows__
@@ -46,3 +48,4 @@ If you are a student and like to stay organised, this app will definitely help y
 1. knex
 1. Google charts
 1. Icons from font-awesome
+
