@@ -16,6 +16,7 @@ If you are a student and like to stay organised, this app will definitely help y
 ### Features Offered By This App
 1. Task Manager
     1. Add Tasks to complete today and this week
+    ![Tasks Image](https://github.com/Rishi-Bidani/PlanGO/blob/withMedia/media/TasksScreenShot.png)
     
 1. Expense Manager
     1. Add a budget
