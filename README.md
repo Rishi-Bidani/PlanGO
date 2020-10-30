@@ -2,7 +2,7 @@
 Developed for TechWithTim Code Jam - For Students
 #
 ### Requirement to setup the app
-* node.js
+* [node.js](https://nodejs.org/en/)
 * Although cross-platform, it has been developed and tested on __Windows__
 
 ### Setup
