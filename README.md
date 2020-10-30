@@ -23,11 +23,14 @@ If you are a student and like to stay organised, this app will definitely help y
     1. Add Expenses in various categories - 
         > Food, Commute, Education, Phone bills, Other bills and Miscellaneous
     1. View a pie chart to analyse your expenses
+    ![Pie Chart Image](https://github.com/Rishi-Bidani/PlanGO/blob/withMedia/media/PieChartScreenShot.png)
     1. Download your expenses in CSV format to view in an excel sheet.
     1. Add Recurring payments such as Rent or Loans under the monthly and annual payment tabs
+    ![Expense Manager](https://github.com/Rishi-Bidani/PlanGO/blob/withMedia/media/ExpensesScreenShot.png)
     
 1. Quick Definitions/Notes
     1. Want some quick revision notes for yourself, such as definitions of key formulae, find this feature under Definitions
+    ![Definitions](https://github.com/Rishi-Bidani/PlanGO/blob/withMedia/media/DefinitionsScreenShot.png)
 
 ### Look Forward to Future Updates
 *Current plans likely to change
