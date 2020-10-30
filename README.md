@@ -39,3 +39,10 @@ If you are a student and like to stay organised, this app will definitely help y
 
 1. Full Notes sections - create notebooks
 1. Calendar to mark your important events
+
+
+### This project uses the following libraries
+1. Electron.js
+1. knex
+1. Google charts
+1. Icons from font-awesome
