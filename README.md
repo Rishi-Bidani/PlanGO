@@ -32,3 +32,9 @@ If you are a student and like to stay organised, this app will definitely help y
 *Current plans likely to change
 
 1. Full Notes sections - create notebooks
+
+### THis project uses the following libraries
+1. Electron.js
+1. knex
+1. Google charts
+1. Icons from font-awesome
