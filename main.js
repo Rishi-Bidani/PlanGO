@@ -16,7 +16,7 @@ taskContents = [];
 
 //SET ENV
 
-// process.env.NODE_ENV = "production";
+process.env.NODE_ENV = "production";
 
 //knex
 var knex = require("knex")({
