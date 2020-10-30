@@ -19,6 +19,7 @@ If you are a student and like to stay organised, this app will definitely help y
 1. Task Manager
     1. Add Tasks to complete today and this week
         > You receive experience points when you complete your tasks, this inscreases your level. Leveling up quickly means you are finishing your tasks on time.
+        
     ![Tasks Image](https://github.com/Rishi-Bidani/PlanGO/blob/withMedia/media/TasksScreenShot.png)
     
 1. Expense Manager
